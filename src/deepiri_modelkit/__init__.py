@@ -14,6 +14,7 @@ from .contracts.events import (
 )
 from .streaming.event_stream import StreamingClient
 from .registry.model_registry import ModelRegistryClient
+from .logging import get_logger, get_error_logger, ErrorLogger
 
 __all__ = [
     "AIModel",  # Protocol interface for type checking
@@ -28,5 +29,8 @@ __all__ = [
     "TrainingEvent",
     "StreamingClient",
     "ModelRegistryClient",
+    "get_logger",
+    "get_error_logger",
+    "ErrorLogger",
 ]
 

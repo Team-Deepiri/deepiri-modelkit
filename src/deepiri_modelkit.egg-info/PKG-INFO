@@ -1,3 +1,19 @@
+Metadata-Version: 2.4
+Name: deepiri-modelkit
+Version: 0.1.0
+Summary: Shared contracts, interfaces, and utilities for Deepiri AI/ML services
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: pydantic>=2.0.0
+Requires-Dist: redis>=5.0.0
+Requires-Dist: mlflow>=2.8.0
+Requires-Dist: boto3>=1.28.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0.0; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.21.0; extra == "dev"
+Requires-Dist: black>=23.0.0; extra == "dev"
+Requires-Dist: mypy>=1.0.0; extra == "dev"
+
 # Deepiri ModelKit
 
 **Shared contracts, interfaces, and utilities for Deepiri AI/ML services.**
@@ -32,7 +48,6 @@ ModelKit provides:
 ## Installation
 
 ```bash
-cd deepiri-modelkit
 pip install -e .
 ```
 
