@@ -40,3 +40,37 @@ htmlcov/
 .dmypy.json
 dmypy.json
 
+# ML Model Files (never commit models!)
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.h5
+*.pb
+*.onnx
+*.pkl
+*.pickle
+*.model
+*.tflite
+*.hdf5
+*.pb
+*.pth.tar
+*.pt.tar
+
+# Model directories
+models/
+checkpoints/
+saved_models/
+trained_models/
+model_cache/
+.cache/
+.huggingface/
+.transformers_cache/
+
+# Large data files
+*.parquet
+*.arrow
+*.feather
+*.hdf5
+*.h5
