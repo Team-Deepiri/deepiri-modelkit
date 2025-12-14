@@ -1,6 +1,24 @@
 # Deepiri ModelKit
 
-Shared contracts, interfaces, and utilities for Deepiri AI/ML services.
+**Shared contracts, interfaces, and utilities for Deepiri AI/ML services.**
+
+## What is ModelKit?
+
+ModelKit is the **shared library** that connects all Deepiri ML services. It provides standardized interfaces, event schemas, and utilities that ensure seamless communication between:
+
+- **Helox** (ML Training) - Trains models and publishes them
+- **Cyrex** (Runtime) - Loads models and serves inference
+- **Platform Services** - Consume model events and predictions
+
+Think of ModelKit as the **"contract layer"** - it defines how models should behave, how events should be structured, and how services should communicate. This ensures that when Helox trains a model, Cyrex can automatically discover, download, and use it without manual intervention.
+
+### Core Purpose
+
+1. **Model Contracts** - Standard `AIModel` interface that all models must implement
+2. **Event-Driven Architecture** - Redis Streams integration for model lifecycle events
+3. **Model Registry** - Unified MLflow + S3/MinIO client for model storage
+4. **Shared Logging** - Structured JSON logging used across all services
+5. **Type Safety** - Pydantic models for all contracts and events
 
 ## Purpose
 
@@ -9,14 +27,33 @@ ModelKit provides:
 - **Event Schemas**: Standardized event formats for streaming
 - **Streaming Client**: Redis Streams client for event-driven architecture
 - **Model Registry Client**: Unified client for MLflow, S3/MinIO, and local storage
+- **Shared Logging**: Structured JSON logging for all services
 
 ## Installation
 
 ```bash
+cd deepiri-modelkit
 pip install -e .
 ```
 
 ## Usage
+
+### Shared Logging
+
+```python
+from deepiri_modelkit import get_logger, get_error_logger
+
+# Service logger
+logger = get_logger("my_service")
+logger.info("service_started", port=8000, version="1.0")
+logger.error("connection_failed", host="redis", reason="timeout")
+
+# Error logger with context
+error_logger = get_error_logger()
+error_logger.log_api_error(e, request_id="123", endpoint="/predict")
+error_logger.log_model_error(e, model_name="classifier", input_data={...})
+error_logger.log_training_error(e, pipeline="qlora", config={...})
+```
 
 ### Model Contracts
 
@@ -81,9 +118,10 @@ deepiri-modelkit/
 ├── src/
 │   └── deepiri_modelkit/
 │       ├── contracts/      # Model and service contracts
-│       ├── streaming/       # Streaming client
-│       ├── registry/        # Model registry client
-│       └── utils/           # Common utilities
+│       ├── streaming/      # Streaming client
+│       ├── registry/       # Model registry client
+│       ├── logging.py      # Shared logging utilities
+│       └── utils/          # Common utilities
 └── pyproject.toml
 ```
 

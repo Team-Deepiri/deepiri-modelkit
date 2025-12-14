@@ -1,0 +1,12 @@
+HELOX (Training)
+    ↓ trains models
+    ↓ registers in MLflow + S3/MinIO
+    ↓ publishes ModelReadyEvent
+    ↓
+REDIS STREAMS (Event Bus)
+    ↓
+CYREX (Runtime)
+    ↓ receives event
+    ↓ downloads from registry
+    ↓ loads model
+    ↓ serves inference API
