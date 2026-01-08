@@ -248,11 +248,9 @@ RUN if [ -d "/app/deepiri-modelkit" ] && [ -f "/app/deepiri-modelkit/pyproject.t
         echo "Warning: deepiri-modelkit not found, skipping installation"; \
     fi
 
-# Copy requirements if provided (optional - can be mounted via volume or provided via build arg)
-# Support both diri-cyrex and diri-helox requirements, or use a generic requirements file
-ARG REQUIREMENTS_PATH=diri-cyrex/requirements.txt
-# Copy requirements file (will fail if file doesn't exist, but that's handled in installation step)
-COPY ${REQUIREMENTS_PATH} /app/requirements.txt
+# Copy requirements from modelkit itself - single source of truth
+# No dependency on cyrex or helox directories existing
+COPY deepiri-modelkit/requirements-jupyter.txt /app/requirements.txt
 
 # Remove torch and deepiri-modelkit from requirements.txt if it exists (already handled)
 RUN if [ -f "/app/requirements.txt" ]; then \
@@ -414,11 +412,9 @@ RUN if [ -d "/app/deepiri-modelkit" ] && [ -f "/app/deepiri-modelkit/pyproject.t
         echo "Warning: deepiri-modelkit not found, skipping installation"; \
     fi
 
-# Copy requirements if provided (optional - can be mounted via volume or provided via build arg)
-# Support both diri-cyrex and diri-helox requirements, or use a generic requirements file
-ARG REQUIREMENTS_PATH=diri-cyrex/requirements.txt
-# Copy requirements file (will fail if file doesn't exist, but that's handled in installation step)
-COPY ${REQUIREMENTS_PATH} /app/requirements.txt
+# Copy requirements from modelkit itself - single source of truth
+# No dependency on cyrex or helox directories existing
+COPY deepiri-modelkit/requirements-jupyter.txt /app/requirements.txt
 
 # Remove torch and deepiri-modelkit from requirements.txt if it exists (already handled)
 RUN if [ -f "/app/requirements.txt" ]; then \
