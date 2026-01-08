@@ -5,6 +5,11 @@ High-performance async document processing and indexing
 
 import asyncio
 from typing import List, Dict, Any, Optional, Callable, Awaitable
+# Fix for Python < 3.9 compatibility
+try:
+    from collections.abc import AsyncIterator
+except ImportError:
+    from typing import AsyncIterator
 from dataclasses import dataclass
 from datetime import datetime
 import time
@@ -364,14 +369,4 @@ class AsyncDocumentProcessor:
                 processed_docs.extend(doc_list)
         
         return processed_docs, result
-
-
-# Type alias for async iterator
-from typing import AsyncIterator
-
-# Fix for Python < 3.9 compatibility
-try:
-    from collections.abc import AsyncIterator
-except ImportError:
-    from typing import AsyncIterator
 
