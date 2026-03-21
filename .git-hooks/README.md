@@ -30,7 +30,7 @@ git config core.hooksPath .git-hooks
 
 - **pre-push**: Blocks direct pushes to protected branches:
   - Exact matches: `main`, `master`
-  - Allowed: `dev`, `name-dev`, `dev-something`, `my-dev-branch` (unless the branch contains `team-dev`)
+  - Allowed: `dev`, `name-dev`, `dev-something`, `my-dev-branch`
 - **post-checkout**: Automatically configures hooksPath on checkout (if not already set)
 - **post-merge**: Automatically syncs hooks to submodules on pull
 
