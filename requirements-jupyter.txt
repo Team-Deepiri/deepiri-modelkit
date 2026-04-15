@@ -59,7 +59,7 @@ onnxruntime>=1.15.0
 # LangChain for RAG & AI Orchestration
 langchain==0.2.12
 langchain-core==1.2.28
-langchain-community==0.2.10
+langchain-community==0.3.27
 langchain-text-splitters==0.3.9
 langchain-openai==0.1.22
 langchain-milvus==0.1.4
