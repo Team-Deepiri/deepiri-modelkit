@@ -60,8 +60,8 @@ onnxruntime>=1.15.0
 langchain==0.2.12
 langchain-core==1.2.28
 langchain-community==0.3.27
-langchain-text-splitters==0.3.9
-langchain-openai==0.1.22
+langchain-text-splitters==1.1.2
+langchain-openai==1.1.14
 langchain-milvus==0.1.4
 langchain-huggingface==0.0.3
 langchain-ollama==0.1.0
@@ -69,7 +69,7 @@ langchain-classic>=0.0.20
 langsmith>=0.1.0
 
 # LangGraph for multi-agent workflows
-langgraph>=0.2.0,<0.3.0
+langgraph>=0.2.0,<1.2.0
 langgraph-checkpoint-redis>=0.2.0
 
 # Local LLM Support
