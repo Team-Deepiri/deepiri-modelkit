@@ -11,7 +11,15 @@ class StreamTopics(str, Enum):
     PLATFORM_EVENTS = "platform-events"
     AGI_DECISIONS = "agi-decisions"
     TRAINING_EVENTS = "training-events"
-    
+    # LIS document routing streams (document.* namespace)
+    DOCUMENT_VECTORIZE = "document.vectorize"
+    DOCUMENT_TRAINING = "document.training"
+    DOCUMENT_STRUCTURED = "document.structured"
+    DOCUMENT_ARTIFACTS = "document.artifacts"
+    # Cyrex runtime training signals for Helox (pipeline.* namespace)
+    HELOX_TRAINING_RAW = "pipeline.helox-training.raw"
+    HELOX_TRAINING_STRUCTURED = "pipeline.helox-training.structured"
+
     @classmethod
     def all(cls) -> list:
         """Get all topic names"""
