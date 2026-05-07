@@ -4,7 +4,13 @@ Deepiri ModelKit - Shared contracts, interfaces, and utilities
 
 __version__ = "0.1.0"
 
-from .contracts.models import AIModel, AIModelPydantic, ModelInput, ModelOutput, ModelMetadata
+from .contracts.models import (
+    AIModel,
+    AIModelPydantic,
+    ModelInput,
+    ModelOutput,
+    ModelMetadata,
+)
 from .contracts.events import (
     ModelReadyEvent,
     InferenceEvent,
@@ -33,4 +39,3 @@ __all__ = [
     "get_error_logger",
     "ErrorLogger",
 ]
-
