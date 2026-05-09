@@ -2,6 +2,7 @@
 Dataset Validation Utilities
 Provides validation and quality checks for language intelligence datasets
 """
+
 import json
 from pathlib import Path
 from typing import Dict, List, Any, Optional
@@ -35,29 +36,42 @@ class DatasetValidator:
             "min_text_length": 10,
             "max_text_length": 10000,
             "required_fields": ["text"],
-            "text_quality_checks": True
+            "text_quality_checks": True,
         }
 
         type_specific_rules = {
             "lease_abstraction": {
                 "min_samples": 50,
                 "lease_keywords": [
-                    "lease", "agreement", "landlord", "tenant", "rent",
-                    "premises", "term", "commencement", "expiration"
+                    "lease",
+                    "agreement",
+                    "landlord",
+                    "tenant",
+                    "rent",
+                    "premises",
+                    "term",
+                    "commencement",
+                    "expiration",
                 ],
                 "min_keyword_matches": 2,
                 "check_address_patterns": True,
-                "check_rent_patterns": True
+                "check_rent_patterns": True,
             },
             "contract_intelligence": {
                 "min_samples": 50,
                 "contract_keywords": [
-                    "contract", "agreement", "party", "obligation",
-                    "clause", "provision", "section", "article"
+                    "contract",
+                    "agreement",
+                    "party",
+                    "obligation",
+                    "clause",
+                    "provision",
+                    "section",
+                    "article",
                 ],
                 "min_keyword_matches": 2,
-                "check_legal_patterns": True
-            }
+                "check_legal_patterns": True,
+            },
         }
 
         if self.dataset_type in type_specific_rules:
@@ -75,14 +89,16 @@ class DatasetValidator:
         Returns:
             Validation results dictionary
         """
-        logger.info("Starting dataset validation", path=str(data_path), type=self.dataset_type)
+        logger.info(
+            "Starting dataset validation", path=str(data_path), type=self.dataset_type
+        )
 
         results = {
             "is_valid": True,
             "errors": [],
             "warnings": [],
             "statistics": {},
-            "quality_score": 0.0
+            "quality_score": 0.0,
         }
 
         try:
@@ -117,11 +133,13 @@ class DatasetValidator:
             results["errors"].append(f"Validation failed with error: {str(e)}")
             logger.error("Dataset validation failed", error=str(e))
 
-        logger.info("Dataset validation complete",
-                    valid=results["is_valid"],
-                    quality_score=results["quality_score"],
-                    errors=len(results["errors"]),
-                    warnings=len(results["warnings"]))
+        logger.info(
+            "Dataset validation complete",
+            valid=results["is_valid"],
+            quality_score=results["quality_score"],
+            errors=len(results["errors"]),
+            warnings=len(results["warnings"]),
+        )
 
         return results
 
@@ -130,7 +148,7 @@ class DatasetValidator:
         samples = []
 
         if data_path.is_file() and data_path.suffix == ".jsonl":
-            with open(data_path, 'r', encoding='utf-8') as f:
+            with open(data_path, "r", encoding="utf-8") as f:
                 for line_num, line in enumerate(f, 1):
                     line = line.strip()
                     if line:
@@ -142,7 +160,7 @@ class DatasetValidator:
 
         elif data_path.is_dir():
             for file_path in data_path.glob("*.jsonl"):
-                with open(file_path, 'r', encoding='utf-8') as f:
+                with open(file_path, "r", encoding="utf-8") as f:
                     for line_num, line in enumerate(f, 1):
                         line = line.strip()
                         if line:
@@ -150,7 +168,9 @@ class DatasetValidator:
                                 sample = json.loads(line)
                                 samples.append(sample)
                             except json.JSONDecodeError as e:
-                                logger.warning(f"Invalid JSON in {file_path} at line {line_num}: {e}")
+                                logger.warning(
+                                    f"Invalid JSON in {file_path} at line {line_num}: {e}"
+                                )
 
         return samples
 
@@ -171,7 +191,9 @@ class DatasetValidator:
         for i, sample in enumerate(samples[:100]):  # Check first 100 samples
             for field in required_fields:
                 if field not in sample:
-                    results["errors"].append(f"Missing required field '{field}' in sample {i}")
+                    results["errors"].append(
+                        f"Missing required field '{field}' in sample {i}"
+                    )
 
     def _validate_content_quality(self, samples: List[Dict], results: Dict):
         """Validate content quality."""
@@ -202,19 +224,25 @@ class DatasetValidator:
                 seen_texts.add(text)
 
         # Statistics
-        results["statistics"].update({
-            "avg_text_length": sum(text_lengths) / len(text_lengths) if text_lengths else 0,
-            "min_text_length": min(text_lengths) if text_lengths else 0,
-            "max_text_length": max(text_lengths) if text_lengths else 0,
-            "empty_texts": empty_texts,
-            "duplicate_texts": len(duplicate_texts)
-        })
+        results["statistics"].update(
+            {
+                "avg_text_length": (
+                    sum(text_lengths) / len(text_lengths) if text_lengths else 0
+                ),
+                "min_text_length": min(text_lengths) if text_lengths else 0,
+                "max_text_length": max(text_lengths) if text_lengths else 0,
+                "empty_texts": empty_texts,
+                "duplicate_texts": len(duplicate_texts),
+            }
+        )
 
         if empty_texts > 0:
             results["errors"].append(f"Found {empty_texts} empty text samples")
 
         if len(duplicate_texts) > len(samples) * 0.01:  # >1% duplicates
-            results["warnings"].append(f"High duplicate rate: {len(duplicate_texts)} duplicates")
+            results["warnings"].append(
+                f"High duplicate rate: {len(duplicate_texts)} duplicates"
+            )
 
     def _validate_type_specific(self, samples: List[Dict], results: Dict):
         """Type-specific validation."""
@@ -233,10 +261,10 @@ class DatasetValidator:
         rent_pattern_matches = 0
 
         # Address patterns (street numbers, street names, cities)
-        address_pattern = r'\d+\s+[A-Za-z0-9\s,.-]+(?:Street|St|Avenue|Ave|Road|Rd|Boulevard|Blvd|Drive|Dr|Lane|Ln|Way|Place|Pl|Court|Ct)\s*,?\s*[A-Za-z\s]+,?\s*\d{5}'
+        address_pattern = r"\d+\s+[A-Za-z0-9\s,.-]+(?:Street|St|Avenue|Ave|Road|Rd|Boulevard|Blvd|Drive|Dr|Lane|Ln|Way|Place|Pl|Court|Ct)\s*,?\s*[A-Za-z\s]+,?\s*\d{5}"
 
         # Rent patterns (dollar amounts)
-        rent_pattern = r'\$\d{1,3}(?:,\d{3})*(?:\.\d{2})?'
+        rent_pattern = r"\$\d{1,3}(?:,\d{3})*(?:\.\d{2})?"
 
         for sample in samples[:500]:  # Check first 500 samples for performance
             text = sample.get("text", "").lower()
@@ -261,11 +289,13 @@ class DatasetValidator:
                 f"Low keyword relevance: {keyword_failure_rate:.1%} samples lack lease keywords"
             )
 
-        results["statistics"].update({
-            "address_pattern_matches": address_pattern_matches,
-            "rent_pattern_matches": rent_pattern_matches,
-            "keyword_relevance_score": 1.0 - keyword_failure_rate
-        })
+        results["statistics"].update(
+            {
+                "address_pattern_matches": address_pattern_matches,
+                "rent_pattern_matches": rent_pattern_matches,
+                "keyword_relevance_score": 1.0 - keyword_failure_rate,
+            }
+        )
 
     def _validate_contract_intelligence(self, samples: List[Dict], results: Dict):
         """Validate contract intelligence dataset."""
@@ -277,11 +307,11 @@ class DatasetValidator:
 
         # Legal clause patterns
         legal_patterns = [
-            r'\bsection\s+\d+',
-            r'\barticle\s+\d+',
-            r'\bclause\s+\d+',
-            r'\bparagraph\s+\d+',
-            r'\bsubsection\s+\d+'
+            r"\bsection\s+\d+",
+            r"\barticle\s+\d+",
+            r"\bclause\s+\d+",
+            r"\bparagraph\s+\d+",
+            r"\bsubsection\s+\d+",
         ]
 
         for sample in samples[:500]:  # Check first 500 samples
@@ -293,7 +323,9 @@ class DatasetValidator:
                 low_keyword_samples += 1
 
             # Legal pattern matching
-            if any(re.search(pattern, sample.get("text", "")) for pattern in legal_patterns):
+            if any(
+                re.search(pattern, sample.get("text", "")) for pattern in legal_patterns
+            ):
                 legal_pattern_matches += 1
 
         total_checked = min(500, len(samples))
@@ -304,10 +336,12 @@ class DatasetValidator:
                 f"Low keyword relevance: {keyword_failure_rate:.1%} samples lack contract keywords"
             )
 
-        results["statistics"].update({
-            "legal_pattern_matches": legal_pattern_matches,
-            "keyword_relevance_score": 1.0 - keyword_failure_rate
-        })
+        results["statistics"].update(
+            {
+                "legal_pattern_matches": legal_pattern_matches,
+                "keyword_relevance_score": 1.0 - keyword_failure_rate,
+            }
+        )
 
     def _calculate_quality_score(self, results: Dict) -> float:
         """Calculate overall quality score (0.0 to 1.0)."""
@@ -349,7 +383,9 @@ class DatasetValidator:
         return max(0.0, min(1.0, score))
 
 
-def validate_dataset_quality(data_path: Path, dataset_type: str = "general") -> Dict[str, Any]:
+def validate_dataset_quality(
+    data_path: Path, dataset_type: str = "general"
+) -> Dict[str, Any]:
     """
     Convenience function to validate dataset quality.
 

@@ -1,11 +1,13 @@
 """
 Stream topic definitions
 """
+
 from enum import Enum
 
 
 class StreamTopics(str, Enum):
     """Redis Stream topics"""
+
     MODEL_EVENTS = "model-events"
     INFERENCE_EVENTS = "inference-events"
     PLATFORM_EVENTS = "platform-events"
@@ -24,4 +26,3 @@ class StreamTopics(str, Enum):
     def all(cls) -> list:
         """Get all topic names"""
         return [topic.value for topic in cls]
-
