@@ -2,7 +2,6 @@
 Dataset Monitoring and Logging Utilities
 Provides monitoring, alerting, and logging for dataset versioning operations
 """
-
 import json
 import time
 from pathlib import Path
@@ -41,7 +40,7 @@ class DatasetMonitor:
             "average_version_creation_time": 0,
             "validation_errors_today": 0,
             "last_health_check": None,
-            "storage_usage_bytes": 0,
+            "storage_usage_bytes": 0
         }
 
         self._load_metrics()
@@ -60,17 +59,15 @@ class DatasetMonitor:
             "change_type": operation_data.get("change_type"),
             "quality_score": operation_data.get("quality_score"),
             "storage_path": operation_data.get("storage_path"),
-            "created_by": operation_data.get("created_by"),
+            "created_by": operation_data.get("created_by")
         }
 
         self._write_log_entry(self.metrics_file, log_entry)
         self.current_metrics["total_versions_created"] += 1
 
-        logger.info(
-            "Version creation logged",
-            dataset=operation_data.get("dataset_name"),
-            version=operation_data.get("version"),
-        )
+        logger.info("Version creation logged",
+                    dataset=operation_data.get("dataset_name"),
+                    version=operation_data.get("version"))
 
     def log_validation_result(self, validation_data: Dict[str, Any]):
         """Log dataset validation results."""
@@ -83,7 +80,7 @@ class DatasetMonitor:
             "quality_score": validation_data.get("quality_score"),
             "error_count": len(validation_data.get("errors", [])),
             "warning_count": len(validation_data.get("warnings", [])),
-            "validation_time_seconds": validation_data.get("validation_time", 0),
+            "validation_time_seconds": validation_data.get("validation_time", 0)
         }
 
         self._write_log_entry(self.metrics_file, log_entry)
@@ -93,22 +90,17 @@ class DatasetMonitor:
 
         # Check for alerts
         if validation_data.get("quality_score", 1.0) < 0.7:
-            self._create_alert(
-                "low_quality_score",
-                {
-                    "dataset_name": validation_data.get("dataset_name"),
-                    "version": validation_data.get("version"),
-                    "quality_score": validation_data.get("quality_score"),
-                    "errors": validation_data.get("errors", []),
-                },
-            )
+            self._create_alert("low_quality_score", {
+                "dataset_name": validation_data.get("dataset_name"),
+                "version": validation_data.get("version"),
+                "quality_score": validation_data.get("quality_score"),
+                "errors": validation_data.get("errors", [])
+            })
 
-        logger.info(
-            "Validation result logged",
-            dataset=validation_data.get("dataset_name"),
-            valid=validation_data.get("is_valid"),
-            quality=validation_data.get("quality_score"),
-        )
+        logger.info("Validation result logged",
+                    dataset=validation_data.get("dataset_name"),
+                    valid=validation_data.get("is_valid"),
+                    quality=validation_data.get("quality_score"))
 
     def log_training_usage(self, training_data: Dict[str, Any]):
         """Log dataset usage in training."""
@@ -121,17 +113,15 @@ class DatasetMonitor:
             "training_duration_seconds": training_data.get("training_duration", 0),
             "final_loss": training_data.get("final_loss"),
             "experiment_id": training_data.get("experiment_id"),
-            "output_model_path": training_data.get("output_model_path"),
+            "output_model_path": training_data.get("output_model_path")
         }
 
         self._write_log_entry(self.metrics_file, log_entry)
 
-        logger.info(
-            "Training usage logged",
-            dataset=training_data.get("dataset_name"),
-            version=training_data.get("dataset_version"),
-            model=training_data.get("model_name"),
-        )
+        logger.info("Training usage logged",
+                    dataset=training_data.get("dataset_name"),
+                    version=training_data.get("dataset_version"),
+                    model=training_data.get("model_name"))
 
     def get_health_report(self) -> Dict[str, Any]:
         """Generate comprehensive health report."""
@@ -140,16 +130,13 @@ class DatasetMonitor:
             "summary": {
                 "total_versions": self.current_metrics["total_versions_created"],
                 "datasets_tracked": self.current_metrics["total_datasets_tracked"],
-                "validation_errors_today": self.current_metrics[
-                    "validation_errors_today"
-                ],
-                "storage_usage_gb": self.current_metrics["storage_usage_bytes"]
-                / (1024**3),
+                "validation_errors_today": self.current_metrics["validation_errors_today"],
+                "storage_usage_gb": self.current_metrics["storage_usage_bytes"] / (1024**3)
             },
             "performance": self._analyze_performance(),
             "quality_trends": self._analyze_quality_trends(),
             "alerts": self._get_recent_alerts(),
-            "recommendations": self._generate_recommendations(),
+            "recommendations": self._generate_recommendations()
         }
 
         self.current_metrics["last_health_check"] = report["timestamp"]
@@ -165,12 +152,12 @@ class DatasetMonitor:
             "training_runs": [],
             "validation_runs": [],
             "popular_datasets": {},
-            "quality_distribution": {},
+            "quality_distribution": {}
         }
 
         # Read logs and filter by date
         if self.metrics_file.exists():
-            with open(self.metrics_file, "r") as f:
+            with open(self.metrics_file, 'r') as f:
                 for line in f:
                     try:
                         entry = json.loads(line.strip())
@@ -180,9 +167,7 @@ class DatasetMonitor:
                             if entry["operation"] == "version_creation":
                                 analytics["version_creations"].append(entry)
                                 dataset = entry.get("dataset_name", "unknown")
-                                analytics["popular_datasets"][dataset] = (
-                                    analytics["popular_datasets"].get(dataset, 0) + 1
-                                )
+                                analytics["popular_datasets"][dataset] = analytics["popular_datasets"].get(dataset, 0) + 1
 
                             elif entry["operation"] == "training_usage":
                                 analytics["training_runs"].append(entry)
@@ -191,12 +176,7 @@ class DatasetMonitor:
                                 analytics["validation_runs"].append(entry)
                                 quality = entry.get("quality_score", 0)
                                 quality_bucket = f"{int(quality * 10) / 10:.1f}"
-                                analytics["quality_distribution"][quality_bucket] = (
-                                    analytics["quality_distribution"].get(
-                                        quality_bucket, 0
-                                    )
-                                    + 1
-                                )
+                                analytics["quality_distribution"][quality_bucket] = analytics["quality_distribution"].get(quality_bucket, 0) + 1
 
                     except json.JSONDecodeError:
                         continue
@@ -209,7 +189,7 @@ class DatasetMonitor:
         validation_times = []
 
         if self.metrics_file.exists():
-            with open(self.metrics_file, "r") as f:
+            with open(self.metrics_file, 'r') as f:
                 for line in f:
                     try:
                         entry = json.loads(line.strip())
@@ -218,22 +198,16 @@ class DatasetMonitor:
                                 creation_times.append(entry["creation_time_seconds"])
                         elif entry["operation"] == "validation":
                             if "validation_time_seconds" in entry:
-                                validation_times.append(
-                                    entry["validation_time_seconds"]
-                                )
+                                validation_times.append(entry["validation_time_seconds"])
                     except json.JSONDecodeError:
                         continue
 
         return {
-            "avg_version_creation_time": (
-                statistics.mean(creation_times) if creation_times else 0
-            ),
-            "avg_validation_time": (
-                statistics.mean(validation_times) if validation_times else 0
-            ),
+            "avg_version_creation_time": statistics.mean(creation_times) if creation_times else 0,
+            "avg_validation_time": statistics.mean(validation_times) if validation_times else 0,
             "total_operations": len(creation_times) + len(validation_times),
             "creation_times": creation_times[-10:],  # Last 10
-            "validation_times": validation_times[-10:],  # Last 10
+            "validation_times": validation_times[-10:]  # Last 10
         }
 
     def _analyze_quality_trends(self) -> Dict[str, Any]:
@@ -241,14 +215,11 @@ class DatasetMonitor:
         quality_scores = []
 
         if self.metrics_file.exists():
-            with open(self.metrics_file, "r") as f:
+            with open(self.metrics_file, 'r') as f:
                 for line in f:
                     try:
                         entry = json.loads(line.strip())
-                        if (
-                            entry["operation"] == "validation"
-                            and "quality_score" in entry
-                        ):
+                        if entry["operation"] == "validation" and "quality_score" in entry:
                             quality_scores.append(entry["quality_score"])
                     except json.JSONDecodeError:
                         continue
@@ -261,8 +232,8 @@ class DatasetMonitor:
 
         # Simple trend analysis
         if len(recent_scores) >= 10:
-            first_half = recent_scores[: len(recent_scores) // 2]
-            second_half = recent_scores[len(recent_scores) // 2 :]
+            first_half = recent_scores[:len(recent_scores)//2]
+            second_half = recent_scores[len(recent_scores)//2:]
 
             first_avg = statistics.mean(first_half)
             second_avg = statistics.mean(second_half)
@@ -284,8 +255,8 @@ class DatasetMonitor:
                 "excellent": len([s for s in quality_scores if s >= 0.9]),
                 "good": len([s for s in quality_scores if 0.7 <= s < 0.9]),
                 "fair": len([s for s in quality_scores if 0.5 <= s < 0.7]),
-                "poor": len([s for s in quality_scores if s < 0.5]),
-            },
+                "poor": len([s for s in quality_scores if s < 0.5])
+            }
         }
 
     def _generate_recommendations(self) -> List[str]:
@@ -294,34 +265,24 @@ class DatasetMonitor:
 
         # Check for frequent validation errors
         if self.current_metrics["validation_errors_today"] > 5:
-            recommendations.append(
-                "High validation error rate detected. Review data quality processes."
-            )
+            recommendations.append("High validation error rate detected. Review data quality processes.")
 
         # Check quality trends
         quality_analysis = self._analyze_quality_trends()
         if quality_analysis.get("trend") == "declining":
-            recommendations.append(
-                "Dataset quality is declining. Consider reviewing data sources and annotation processes."
-            )
+            recommendations.append("Dataset quality is declining. Consider reviewing data sources and annotation processes.")
 
         # Check performance
         performance = self._analyze_performance()
         if performance.get("avg_version_creation_time", 0) > 300:  # 5 minutes
-            recommendations.append(
-                "Version creation is slow. Consider optimizing storage or processing."
-            )
+            recommendations.append("Version creation is slow. Consider optimizing storage or processing.")
 
         # General recommendations
         if self.current_metrics["total_versions_created"] == 0:
-            recommendations.append(
-                "No dataset versions created yet. Start versioning your datasets for reproducibility."
-            )
+            recommendations.append("No dataset versions created yet. Start versioning your datasets for reproducibility.")
 
         if not recommendations:
-            recommendations.append(
-                "System operating normally. Continue regular monitoring."
-            )
+            recommendations.append("System operating normally. Continue regular monitoring.")
 
         return recommendations
 
@@ -332,12 +293,14 @@ class DatasetMonitor:
             "alert_type": alert_type,
             "severity": "warning",  # Could be "info", "warning", "error"
             "data": alert_data,
-            "resolved": False,
+            "resolved": False
         }
 
         self._write_log_entry(self.alerts_file, alert_entry)
 
-        logger.warning("Alert created", type=alert_type, data=alert_data)
+        logger.warning("Alert created",
+                       type=alert_type,
+                       data=alert_data)
 
     def _get_recent_alerts(self, hours: int = 24) -> List[Dict[str, Any]]:
         """Get recent alerts."""
@@ -345,7 +308,7 @@ class DatasetMonitor:
         cutoff_time = datetime.utcnow() - timedelta(hours=hours)
 
         if self.alerts_file.exists():
-            with open(self.alerts_file, "r") as f:
+            with open(self.alerts_file, 'r') as f:
                 for line in f:
                     try:
                         alert = json.loads(line.strip())
@@ -359,33 +322,22 @@ class DatasetMonitor:
 
     def _write_log_entry(self, log_file: Path, entry: Dict[str, Any]):
         """Write a log entry to file."""
-        with open(log_file, "a") as f:
-            f.write(json.dumps(entry) + "\n")
+        with open(log_file, 'a') as f:
+            f.write(json.dumps(entry) + '\n')
 
     def _load_metrics(self):
         """Load current metrics from log files."""
         if self.metrics_file.exists():
             try:
-                with open(self.metrics_file, "r") as f:
+                with open(self.metrics_file, 'r') as f:
                     lines = f.readlines()
                     if lines:
                         # Count operations from logs
-                        version_count = sum(
-                            1
-                            for line in lines
-                            if '"operation": "version_creation"' in line
-                        )
-                        validation_count = sum(
-                            1
-                            for line in lines
-                            if '"operation": "validation"' in line
-                            and '"is_valid": false' in line
-                        )
+                        version_count = sum(1 for line in lines if '"operation": "version_creation"' in line)
+                        validation_count = sum(1 for line in lines if '"operation": "validation"' in line and '"is_valid": false' in line)
 
                         self.current_metrics["total_versions_created"] = version_count
-                        self.current_metrics["validation_errors_today"] = (
-                            validation_count
-                        )
+                        self.current_metrics["validation_errors_today"] = validation_count
             except Exception as e:
                 logger.warning("Failed to load metrics from log", error=str(e))
 
@@ -394,17 +346,21 @@ class DatasetMonitor:
 def log_version_creation(dataset_name: str, version: str, **kwargs):
     """Convenience function to log version creation."""
     monitor = DatasetMonitor()
-    monitor.log_version_creation(
-        {"dataset_name": dataset_name, "version": version, **kwargs}
-    )
+    monitor.log_version_creation({
+        "dataset_name": dataset_name,
+        "version": version,
+        **kwargs
+    })
 
 
 def log_validation_result(dataset_name: str, version: str, **kwargs):
     """Convenience function to log validation results."""
     monitor = DatasetMonitor()
-    monitor.log_validation_result(
-        {"dataset_name": dataset_name, "version": version, **kwargs}
-    )
+    monitor.log_validation_result({
+        "dataset_name": dataset_name,
+        "version": version,
+        **kwargs
+    })
 
 
 def get_health_report():

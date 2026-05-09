@@ -3,7 +3,6 @@ Dynamic Semantic Analysis for Data Augmentation
 Inspired by Carnegie Mellon University (CMU) Language Technologies Institute approaches
 Uses semantic similarity and contextual understanding for dynamic variation generation
 """
-
 import json
 import re
 from typing import List, Dict, Optional, Set
@@ -17,21 +16,18 @@ logger = get_logger("deepiri_modelkit.ml.semantic")
 # Try multiple HTTP clients
 try:
     import httpx
-
     HAS_HTTPX = True
 except ImportError:
     HAS_HTTPX = False
 
 try:
     import requests
-
     HAS_REQUESTS = True
 except ImportError:
     HAS_REQUESTS = False
 
 try:
     import ollama
-
     HAS_OLLAMA_PKG = True
 except ImportError:
     HAS_OLLAMA_PKG = False
@@ -43,16 +39,12 @@ class SemanticAnalyzer:
     Inspired by CMU's semantic analysis approaches
     """
 
-    def __init__(
-        self, ollama_base_url: str = "http://localhost:11434", model: str = "llama3:8b"
-    ):
+    def __init__(self, ollama_base_url: str = "http://localhost:11434", model: str = "llama3:8b"):
         self.ollama_base_url = ollama_base_url
         self.model = model
         self._cache = {}  # Cache for semantic analysis results
 
-    def _call_ollama(
-        self, prompt: str, timeout: float = 15.0
-    ) -> Optional[str]:  # Reduced from 30s to 15s
+    def _call_ollama(self, prompt: str, timeout: float = 15.0) -> Optional[str]:  # Reduced from 30s to 15s
         """Call Ollama API directly via HTTP or Python package"""
         # Try ollama Python package first (cleaner API)
         if HAS_OLLAMA_PKG:
@@ -63,8 +55,8 @@ class SemanticAnalyzer:
                     options={
                         "temperature": 0.7,
                         "top_p": 0.9,
-                        "num_predict": 100,  # Reduced from 200 for faster responses
-                    },
+                        "num_predict": 100  # Reduced from 200 for faster responses
+                    }
                 )
                 return response.get("response", "").strip()
             except Exception:
@@ -84,10 +76,10 @@ class SemanticAnalyzer:
                         "options": {
                             "temperature": 0.7,
                             "top_p": 0.9,
-                            "num_predict": 100,  # Reduced from 200 for faster responses
-                        },
+                            "num_predict": 100  # Reduced from 200 for faster responses
+                        }
                     },
-                    timeout=timeout,
+                    timeout=timeout
                 )
 
                 if response.status_code == 200:
@@ -95,9 +87,7 @@ class SemanticAnalyzer:
                     logger.debug("Ollama HTTP call succeeded")
                     return result.get("response", "").strip()
                 else:
-                    logger.debug(
-                        f"Ollama HTTP call failed: HTTP {response.status_code}"
-                    )
+                    logger.debug(f"Ollama HTTP call failed: HTTP {response.status_code}")
             elif HAS_REQUESTS:
                 logger.debug(f"Calling Ollama HTTP with {len(prompt)} char prompt")
                 response = requests.post(
@@ -109,10 +99,10 @@ class SemanticAnalyzer:
                         "options": {
                             "temperature": 0.7,
                             "top_p": 0.9,
-                            "num_predict": 100,  # Reduced from 200 for faster responses
-                        },
+                            "num_predict": 100  # Reduced from 200 for faster responses
+                        }
                     },
-                    timeout=timeout,
+                    timeout=timeout
                 )
 
                 if response.status_code == 200:
@@ -120,9 +110,7 @@ class SemanticAnalyzer:
                     logger.debug("Ollama HTTP call succeeded")
                     return result.get("response", "").strip()
                 else:
-                    logger.debug(
-                        f"Ollama HTTP call failed: HTTP {response.status_code}"
-                    )
+                    logger.debug(f"Ollama HTTP call failed: HTTP {response.status_code}")
         except Exception as e:
             logger.debug(f"Ollama HTTP call failed: {e}")
 
@@ -149,7 +137,7 @@ Return ONLY a JSON array of verbs, no explanation. Example: ["write", "draft", "
         response = self._call_ollama(prompt)
         if response:
             try:
-                json_match = re.search(r"\[.*?\]", response, re.DOTALL)
+                json_match = re.search(r'\[.*?\]', response, re.DOTALL)
                 if json_match:
                     verbs = json.loads(json_match.group())
                     if isinstance(verbs, list) and len(verbs) > 0:
@@ -183,7 +171,7 @@ Return ONLY a JSON array of prefixes. Example: ["I need to", "Can you help me", 
         response = self._call_ollama(prompt)
         if response:
             try:
-                json_match = re.search(r"\[.*?\]", response, re.DOTALL)
+                json_match = re.search(r'\[.*?\]', response, re.DOTALL)
                 if json_match:
                     prefixes = json.loads(json_match.group())
                     if isinstance(prefixes, list) and len(prefixes) > 0:
@@ -194,14 +182,8 @@ Return ONLY a JSON array of prefixes. Example: ["I need to", "Can you help me", 
 
         # Fallback: return default prefixes
         return [
-            "I need to",
-            "Can you help me",
-            "Please",
-            "I want to",
-            "Help me",
-            "I should",
-            "Let me",
-            "I'm going to",
+            "I need to", "Can you help me", "Please", "I want to",
+            "Help me", "I should", "Let me", "I'm going to"
         ]
 
     def generate_semantic_suffixes(self, text: str, category: str) -> List[str]:
@@ -225,7 +207,7 @@ Return ONLY a JSON array of suffixes. Example: [" today", " this week", " as soo
         response = self._call_ollama(prompt)
         if response:
             try:
-                json_match = re.search(r"\[.*?\]", response, re.DOTALL)
+                json_match = re.search(r'\[.*?\]', response, re.DOTALL)
                 if json_match:
                     suffixes = json.loads(json_match.group())
                     if isinstance(suffixes, list) and len(suffixes) > 0:
@@ -236,18 +218,11 @@ Return ONLY a JSON array of suffixes. Example: [" today", " this week", " as soo
 
         # Fallback: return default suffixes
         return [
-            "",
-            " today",
-            " this week",
-            " as soon as possible",
-            " when you have time",
-            " - urgent",
-            " - important",
+            "", " today", " this week", " as soon as possible",
+            " when you have time", " - urgent", " - important"
         ]
 
-    def generate_paraphrases(
-        self, text: str, category: str, num_paraphrases: int = 3
-    ) -> List[str]:
+    def generate_paraphrases(self, text: str, category: str, num_paraphrases: int = 3) -> List[str]:
         """
         Generate semantic paraphrases using Ollama
         Inspired by CMU's paraphrase generation approaches
@@ -268,12 +243,12 @@ Return ONLY the paraphrases, one per line, without numbering or bullets."""
         response = self._call_ollama(prompt)
         if response:
             paraphrases = []
-            for line in response.strip().split("\n"):
+            for line in response.strip().split('\n'):
                 line = line.strip()
                 # Remove common prefixes
-                for prefix in ["- ", "1. ", "2. ", "3. ", "4. ", "5. ", "* ", "• "]:
+                for prefix in ['- ', '1. ', '2. ', '3. ', '4. ', '5. ', '* ', '• ']:
                     if line.startswith(prefix):
-                        line = line[len(prefix) :].strip()
+                        line = line[len(prefix):].strip()
 
                 if line and line != text and len(line) > 10:
                     paraphrases.append(line)
@@ -303,7 +278,7 @@ Return a JSON object with these fields."""
         response = self._call_ollama(prompt)
         if response:
             try:
-                json_match = re.search(r"\{.*?\}", response, re.DOTALL)
+                json_match = re.search(r'\{.*?\}', response, re.DOTALL)
                 if json_match:
                     return json.loads(json_match.group())
             except Exception:
@@ -316,7 +291,7 @@ Return a JSON object with these fields."""
             "object": " ".join(words[1:]) if len(words) > 1 else "",
             "modifiers": [],
             "temporal": None,
-            "urgency": None,
+            "urgency": None
         }
 
     def check_ollama_available(self) -> bool:
@@ -332,10 +307,16 @@ Return a JSON object with these fields."""
         # Fall back to HTTP check
         try:
             if HAS_HTTPX:
-                response = httpx.get(f"{self.ollama_base_url}/api/tags", timeout=5.0)
+                response = httpx.get(
+                    f"{self.ollama_base_url}/api/tags",
+                    timeout=5.0
+                )
                 return response.status_code == 200
             elif HAS_REQUESTS:
-                response = requests.get(f"{self.ollama_base_url}/api/tags", timeout=5.0)
+                response = requests.get(
+                    f"{self.ollama_base_url}/api/tags",
+                    timeout=5.0
+                )
                 return response.status_code == 200
         except Exception:
             pass
@@ -344,7 +325,8 @@ Return a JSON object with these fields."""
 
 
 def get_semantic_analyzer(
-    ollama_base_url: Optional[str] = None, model: Optional[str] = None
+    ollama_base_url: Optional[str] = None,
+    model: Optional[str] = None
 ) -> Optional[SemanticAnalyzer]:
     """
     Factory function to get semantic analyzer
