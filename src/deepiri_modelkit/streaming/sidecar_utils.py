@@ -13,7 +13,9 @@ from typing import Any, Callable, Dict, Optional
 from urllib.parse import urlparse
 
 
-def env_float(name: str, default: float, logger: Optional[Callable[[str], None]] = None) -> float:
+def env_float(
+    name: str, default: float, logger: Optional[Callable[[str], None]] = None
+) -> float:
     """Read a float env var with safe fallback."""
     raw = os.getenv(name)
     if raw is None:

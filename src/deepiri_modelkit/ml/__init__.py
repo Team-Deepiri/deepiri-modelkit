@@ -8,12 +8,14 @@ try:
         ConfidenceCalculator,
         get_confidence_calculator,
     )
+
     _HAS_CONFIDENCE = True
 except ImportError:
     _HAS_CONFIDENCE = False
 
 try:
     from .semantic import SemanticAnalyzer, get_semantic_analyzer
+
     _HAS_SEMANTIC = True
 except ImportError:
     _HAS_SEMANTIC = False
