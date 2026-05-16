@@ -37,6 +37,7 @@ try:
         MultiQueryRetriever,
         QueryCache,
     )
+
     HAS_ADVANCED_RETRIEVAL = True
 except ImportError:
     HAS_ADVANCED_RETRIEVAL = False
@@ -53,6 +54,7 @@ try:
         EmbeddingCache,
         QueryResultCache,
     )
+
     HAS_CACHING = True
 except ImportError:
     HAS_CACHING = False
@@ -68,6 +70,7 @@ try:
         SystemMetrics,
         PerformanceTimer,
     )
+
     HAS_MONITORING = True
 except ImportError:
     HAS_MONITORING = False
@@ -85,6 +88,7 @@ try:
         BatchProcessingConfig,
         BatchProcessingResult,
     )
+
     HAS_ASYNC = True
 except ImportError:
     HAS_ASYNC = False
@@ -119,37 +123,44 @@ __all__ = [
 
 # Conditionally add advanced features
 if HAS_ADVANCED_RETRIEVAL:
-    __all__.extend([
-        "AdvancedRetrievalPipeline",
-        "QueryExpander",
-        "SynonymQueryExpander",
-        "RephraseQueryExpander",
-        "MultiQueryRetriever",
-        "QueryCache",
-    ])
+    __all__.extend(
+        [
+            "AdvancedRetrievalPipeline",
+            "QueryExpander",
+            "SynonymQueryExpander",
+            "RephraseQueryExpander",
+            "MultiQueryRetriever",
+            "QueryCache",
+        ]
+    )
 
 if HAS_CACHING:
-    __all__.extend([
-        "AdvancedCacheManager",
-        "EmbeddingCache",
-        "QueryResultCache",
-    ])
+    __all__.extend(
+        [
+            "AdvancedCacheManager",
+            "EmbeddingCache",
+            "QueryResultCache",
+        ]
+    )
 
 if HAS_MONITORING:
-    __all__.extend([
-        "RAGMonitor",
-        "RetrievalMetrics",
-        "IndexingMetrics",
-        "SystemMetrics",
-        "PerformanceTimer",
-    ])
+    __all__.extend(
+        [
+            "RAGMonitor",
+            "RetrievalMetrics",
+            "IndexingMetrics",
+            "SystemMetrics",
+            "PerformanceTimer",
+        ]
+    )
 
 if HAS_ASYNC:
-    __all__.extend([
-        "AsyncBatchProcessor",
-        "AsyncDocumentIndexer",
-        "AsyncDocumentProcessor",
-        "BatchProcessingConfig",
-        "BatchProcessingResult",
-    ])
-
+    __all__.extend(
+        [
+            "AsyncBatchProcessor",
+            "AsyncDocumentIndexer",
+            "AsyncDocumentProcessor",
+            "BatchProcessingConfig",
+            "BatchProcessingResult",
+        ]
+    )
