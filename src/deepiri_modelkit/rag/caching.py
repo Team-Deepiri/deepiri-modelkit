@@ -23,7 +23,7 @@ class CacheEntry:
     expires_at: Optional[datetime]
     access_count: int = 0
     last_accessed: Optional[datetime] = None
-    tags: List[str] = None
+    tags: Optional[List[str]] = None
 
     def __post_init__(self):
         if self.tags is None:
@@ -109,7 +109,7 @@ class AdvancedCacheManager:
             return json.dumps(value)
         return str(value)
 
-    def _deserialize_value(self, value: str, value_type: type = None) -> Any:
+    def _deserialize_value(self, value: str, value_type: Optional[type] = None) -> Any:
         """Deserialize value from storage"""
         try:
             if value_type == list or (isinstance(value, str) and value.startswith("[")):
@@ -248,7 +248,7 @@ class AdvancedCacheManager:
         if key in self.memory_cache:
             entry = self.memory_cache[key]
             # Remove from tag indexes
-            for tag in entry.tags:
+            for tag in entry.tags or []:
                 if tag in self.tag_index and key in self.tag_index[tag]:
                     self.tag_index[tag].remove(key)
             del self.memory_cache[key]
@@ -340,7 +340,7 @@ class AdvancedCacheManager:
 
     def get_stats(self) -> Dict[str, Any]:
         """Get cache statistics"""
-        stats = {
+        stats: Dict[str, Any] = {
             "memory_cache_size": len(self.memory_cache),
             "max_size": self.max_size,
             "tag_index_size": len(self.tag_index),

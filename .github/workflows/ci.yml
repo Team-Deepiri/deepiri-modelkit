@@ -38,7 +38,7 @@ jobs:
         run: black --check src/
 
       - name: Type check
-        run: mypy src/ || true
+        run: mypy src/
 
       - name: Run tests
         run: pytest

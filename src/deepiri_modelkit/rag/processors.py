@@ -116,7 +116,7 @@ class RegulationProcessor(DocumentProcessor):
         section_pattern = r"(Section|Article|Part|Chapter)\s+(\d+(?:\.\d+)*)"
 
         sections = []
-        current_section = {"section": None, "content": ""}
+        current_section: Dict[str, str] = {"section": "", "content": ""}
 
         lines = content.split("\n")
         for line in lines:
@@ -379,7 +379,7 @@ class ManualProcessor(DocumentProcessor):
         section_pattern = r"(Chapter|Section)\s+(\d+(?:\.\d+)*):?\s*(.+?)(?=\n)"
 
         sections = []
-        current_section = {"chapter": None, "section": None, "content": ""}
+        current_section: Dict[str, str] = {"chapter": "", "section": "", "content": ""}
 
         lines = content.split("\n")
         for line in lines:
@@ -426,18 +426,20 @@ def get_processor(doc_type: DocumentType, **kwargs) -> DocumentProcessor:
     Returns:
         Configured document processor
     """
-    processor_map = {
-        DocumentType.REGULATION: RegulationProcessor,
-        DocumentType.POLICY: RegulationProcessor,  # Similar processing
-        DocumentType.WORK_ORDER: HistoricalDataProcessor,
-        DocumentType.CLAIM_RECORD: HistoricalDataProcessor,
-        DocumentType.MAINTENANCE_LOG: HistoricalDataProcessor,
-        DocumentType.FAQ: KnowledgeBaseProcessor,
-        DocumentType.KNOWLEDGE_BASE: KnowledgeBaseProcessor,
-        DocumentType.MANUAL: ManualProcessor,
-        DocumentType.TECHNICAL_SPEC: ManualProcessor,  # Similar processing
-        DocumentType.PROCEDURE: ManualProcessor,  # Similar processing
-    }
-
-    processor_class = processor_map.get(doc_type, DocumentProcessor)
-    return processor_class(**kwargs)
+    if doc_type in (DocumentType.REGULATION, DocumentType.POLICY):
+        return RegulationProcessor(**kwargs)
+    if doc_type in (
+        DocumentType.WORK_ORDER,
+        DocumentType.CLAIM_RECORD,
+        DocumentType.MAINTENANCE_LOG,
+    ):
+        return HistoricalDataProcessor(**kwargs)
+    if doc_type in (DocumentType.FAQ, DocumentType.KNOWLEDGE_BASE):
+        return KnowledgeBaseProcessor(**kwargs)
+    if doc_type in (
+        DocumentType.MANUAL,
+        DocumentType.TECHNICAL_SPEC,
+        DocumentType.PROCEDURE,
+    ):
+        return ManualProcessor(**kwargs)
+    raise ValueError(f"No processor registered for document type: {doc_type}")

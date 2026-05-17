@@ -66,7 +66,7 @@ def sidecar_payload_from_fields(fields: Dict[str, Any]) -> Dict[str, Any]:
             payload = json.loads(payload)
         except ValueError:
             payload = {}
-    elif not isinstance(payload, dict):
+    if not isinstance(payload, dict):
         payload = {}
 
     if "event" not in payload and fields.get("event_type"):

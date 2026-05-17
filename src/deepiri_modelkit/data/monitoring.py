@@ -35,7 +35,7 @@ class DatasetMonitor:
         self.alerts_file = self.log_dir / "alerts.jsonl"
 
         # In-memory metrics for quick access
-        self.current_metrics = {
+        self.current_metrics: Dict[str, Any] = {
             "total_versions_created": 0,
             "total_datasets_tracked": 0,
             "average_version_creation_time": 0,
@@ -159,7 +159,7 @@ class DatasetMonitor:
         """Get usage analytics for the specified period."""
         cutoff_date = datetime.utcnow() - timedelta(days=days)
 
-        analytics = {
+        analytics: Dict[str, Any] = {
             "period_days": days,
             "version_creations": [],
             "training_runs": [],
