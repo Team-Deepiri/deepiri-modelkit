@@ -4,7 +4,7 @@ Implements various retrieval strategies for different use cases
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any, Optional
+from typing import Any, Callable, Dict, List, Optional
 from dataclasses import dataclass
 
 from .base import Document, RetrievalResult, RAGQuery
@@ -276,8 +276,9 @@ def get_retriever(retriever_type: str, **kwargs) -> BaseRetriever:
     Returns:
         Configured retriever
     """
-    if retriever_type == "multimodal":
-        return MultiModalRetriever(**kwargs)
-    if retriever_type == "contextual":
-        return ContextualRetriever(**kwargs)
-    return HybridRetriever(**kwargs)
+    retriever_map: Dict[str, Callable[..., BaseRetriever]] = {
+        "hybrid": HybridRetriever,
+        "multimodal": MultiModalRetriever,
+        "contextual": ContextualRetriever,
+    }
+    return retriever_map.get(retriever_type, HybridRetriever)(**kwargs)

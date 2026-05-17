@@ -4,7 +4,7 @@ Handles preprocessing, chunking, and metadata extraction for different document 
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any, Optional
+from typing import Any, Callable, Dict, List, Optional
 import re
 from datetime import datetime
 
@@ -426,20 +426,20 @@ def get_processor(doc_type: DocumentType, **kwargs) -> DocumentProcessor:
     Returns:
         Configured document processor
     """
-    if doc_type in (DocumentType.REGULATION, DocumentType.POLICY):
-        return RegulationProcessor(**kwargs)
-    if doc_type in (
-        DocumentType.WORK_ORDER,
-        DocumentType.CLAIM_RECORD,
-        DocumentType.MAINTENANCE_LOG,
-    ):
-        return HistoricalDataProcessor(**kwargs)
-    if doc_type in (DocumentType.FAQ, DocumentType.KNOWLEDGE_BASE):
-        return KnowledgeBaseProcessor(**kwargs)
-    if doc_type in (
-        DocumentType.MANUAL,
-        DocumentType.TECHNICAL_SPEC,
-        DocumentType.PROCEDURE,
-    ):
-        return ManualProcessor(**kwargs)
-    raise ValueError(f"No processor registered for document type: {doc_type}")
+    processor_map: Dict[DocumentType, Callable[..., DocumentProcessor]] = {
+        DocumentType.REGULATION: RegulationProcessor,
+        DocumentType.POLICY: RegulationProcessor,  # Similar processing
+        DocumentType.WORK_ORDER: HistoricalDataProcessor,
+        DocumentType.CLAIM_RECORD: HistoricalDataProcessor,
+        DocumentType.MAINTENANCE_LOG: HistoricalDataProcessor,
+        DocumentType.FAQ: KnowledgeBaseProcessor,
+        DocumentType.KNOWLEDGE_BASE: KnowledgeBaseProcessor,
+        DocumentType.MANUAL: ManualProcessor,
+        DocumentType.TECHNICAL_SPEC: ManualProcessor,  # Similar processing
+        DocumentType.PROCEDURE: ManualProcessor,  # Similar processing
+    }
+
+    factory = processor_map.get(doc_type)
+    if factory is None:
+        raise ValueError(f"No processor registered for document type: {doc_type}")
+    return factory(**kwargs)
