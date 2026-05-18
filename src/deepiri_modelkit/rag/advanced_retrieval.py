@@ -394,12 +394,11 @@ class AdvancedRetrievalPipeline:
         self.use_cache = use_cache
         self.query_cache = QueryCache(cache_manager) if use_cache else None
 
+        self.multi_query_retriever: Optional[MultiQueryRetriever] = None
         if use_multi_query:
             self.multi_query_retriever = MultiQueryRetriever(
                 base_retriever=base_retriever, query_expander=query_expander
             )
-        else:
-            self.multi_query_retriever = None
 
     def retrieve(self, query: RAGQuery) -> List[RetrievalResult]:
         """Retrieve with advanced strategies"""

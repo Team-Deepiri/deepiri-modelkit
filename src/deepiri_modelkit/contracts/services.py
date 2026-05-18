@@ -2,7 +2,7 @@
 Service contracts and interfaces
 """
 
-from typing import Protocol, Dict, Any, Optional
+from typing import Any, Callable, Dict, Optional, Protocol
 from pydantic import BaseModel
 
 
@@ -38,7 +38,10 @@ class StreamingService(Protocol):
         ...
 
     def subscribe(
-        self, topic: str, callback: callable, consumer_group: Optional[str] = None
+        self,
+        topic: str,
+        callback: Callable[[Dict[str, Any]], Any],
+        consumer_group: Optional[str] = None,
     ) -> None:
         """Subscribe to topic with callback"""
         ...

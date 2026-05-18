@@ -39,3 +39,13 @@ python_version = "3.11"
 warn_return_any = true
 warn_unused_configs = true
 
+[[tool.mypy.overrides]]
+module = [
+    "boto3",
+    "botocore.exceptions",
+    "torch",
+    "httpx",
+    "ollama",
+]
+ignore_missing_imports = true
+
