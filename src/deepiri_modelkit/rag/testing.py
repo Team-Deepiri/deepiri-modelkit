@@ -20,7 +20,7 @@ class TestCase:
     expected_doc_types: Optional[List[DocumentType]] = None
     min_score: float = 0.7  # Minimum similarity score
     top_k: int = 5
-    metadata: Dict[str, Any] = None
+    metadata: Optional[Dict[str, Any]] = None
 
     def __post_init__(self):
         if self.metadata is None:

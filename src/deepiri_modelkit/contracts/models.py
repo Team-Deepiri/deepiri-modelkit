@@ -112,7 +112,7 @@ class AIModelPydantic:
 
             return value
 
-        def serialize_aimodel(value: Any) -> Dict[str, Any]:
+        def serialize_aimodel(value: Any) -> Optional[Dict[str, Any]]:
             """Serialize AIModel instance to dict"""
             if value is None:
                 return None

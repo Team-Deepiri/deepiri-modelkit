@@ -41,7 +41,7 @@ class BatchProcessingResult:
     successful_items: int
     failed_items: int
     processing_time_seconds: float
-    errors: List[Dict[str, Any]] = None
+    errors: Optional[List[Dict[str, Any]]] = None
 
     def __post_init__(self):
         if self.errors is None:
@@ -118,7 +118,7 @@ class AsyncBatchProcessor:
 
         # Aggregate results
         for result in batch_results:
-            if isinstance(result, Exception):
+            if isinstance(result, BaseException):
                 failed_items += self.config.batch_size
                 errors.append({"error": str(result), "type": type(result).__name__})
             else:
@@ -253,7 +253,7 @@ class AsyncDocumentIndexer:
         Returns:
             BatchProcessingResult with statistics
         """
-        batch = []
+        batch: list[Document] = []
         total_processed = 0
         successful = 0
         failed = 0

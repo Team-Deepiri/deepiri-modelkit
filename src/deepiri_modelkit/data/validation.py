@@ -93,7 +93,7 @@ class DatasetValidator:
             "Starting dataset validation", path=str(data_path), type=self.dataset_type
         )
 
-        results = {
+        results: Dict[str, Any] = {
             "is_valid": True,
             "errors": [],
             "warnings": [],
