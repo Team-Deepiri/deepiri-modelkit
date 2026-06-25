@@ -8,6 +8,7 @@ from dataclasses import dataclass
 
 try:
     import numpy as np
+
     HAS_NUMPY = True
 except ImportError:
     HAS_NUMPY = False
@@ -15,6 +16,7 @@ except ImportError:
 
 class ConfidenceLevel(str, Enum):
     """Confidence level categories"""
+
     VERY_HIGH = "very_high"  # 0.9-1.0
     HIGH = "high"  # 0.75-0.9
     MEDIUM = "medium"  # 0.5-0.75
@@ -24,6 +26,7 @@ class ConfidenceLevel(str, Enum):
 
 class ConfidenceSource(str, Enum):
     """Sources of confidence information"""
+
     MODEL_PREDICTION = "model_prediction"
     TRAINING_DATA_COVERAGE = "training_data_coverage"
     FEATURE_QUALITY = "feature_quality"
@@ -46,6 +49,7 @@ class ConfidenceAttributes:
         reliability: Overall reliability score
         explanation: Human-readable explanation
     """
+
     base_score: float
     level: ConfidenceLevel
     sources: Dict[str, float]
@@ -63,7 +67,7 @@ class ConfidenceAttributes:
             "uncertainty": self.uncertainty,
             "calibration": self.calibration,
             "reliability": self.reliability,
-            "explanation": self.explanation
+            "explanation": self.explanation,
         }
 
 
@@ -78,7 +82,7 @@ class ConfidenceCalculator:
             ConfidenceLevel.HIGH: 0.75,
             ConfidenceLevel.MEDIUM: 0.5,
             ConfidenceLevel.LOW: 0.25,
-            ConfidenceLevel.VERY_LOW: 0.0
+            ConfidenceLevel.VERY_LOW: 0.0,
         }
 
     def calculate_confidence(
@@ -88,7 +92,7 @@ class ConfidenceCalculator:
         training_coverage: Optional[float] = None,
         feature_quality: Optional[float] = None,
         context_match: Optional[float] = None,
-        historical_accuracy: Optional[Dict[int, float]] = None
+        historical_accuracy: Optional[Dict[int, float]] = None,
     ) -> ConfidenceAttributes:
         """
         Calculate comprehensive confidence attributes
@@ -105,7 +109,9 @@ class ConfidenceCalculator:
             ConfidenceAttributes object
         """
         if not HAS_NUMPY:
-            raise ImportError("numpy is required for ConfidenceCalculator. Install with: pip install numpy")
+            raise ImportError(
+                "numpy is required for ConfidenceCalculator. Install with: pip install numpy"
+            )
 
         # Base score: maximum probability
         base_score = float(np.max(model_probabilities))
@@ -117,7 +123,9 @@ class ConfidenceCalculator:
 
         # Calibration: difference between top-2 probabilities (margin)
         sorted_probs = np.sort(model_probabilities)[::-1]
-        margin = float(sorted_probs[0] - sorted_probs[1]) if len(sorted_probs) > 1 else 1.0
+        margin = (
+            float(sorted_probs[0] - sorted_probs[1]) if len(sorted_probs) > 1 else 1.0
+        )
         calibration = float(margin)  # Higher margin = better calibration
 
         # Source contributions
@@ -130,7 +138,9 @@ class ConfidenceCalculator:
         if training_coverage is not None:
             sources[ConfidenceSource.TRAINING_DATA_COVERAGE.value] = training_coverage
         else:
-            sources[ConfidenceSource.TRAINING_DATA_COVERAGE.value] = 0.7  # Default moderate
+            sources[
+                ConfidenceSource.TRAINING_DATA_COVERAGE.value
+            ] = 0.7  # Default moderate
 
         # Feature quality
         if feature_quality is not None:
@@ -150,12 +160,16 @@ class ConfidenceCalculator:
             hist_acc = historical_accuracy.get(predicted_class, 0.7)
             sources[ConfidenceSource.HISTORICAL_ACCURACY.value] = hist_acc
         else:
-            sources[ConfidenceSource.HISTORICAL_ACCURACY.value] = 0.7  # Default moderate
+            sources[
+                ConfidenceSource.HISTORICAL_ACCURACY.value
+            ] = 0.7  # Default moderate
 
         # Ensemble agreement (if top_k_probs provided)
         if top_k_probs:
             agreement = float(np.std(top_k_probs))  # Lower std = higher agreement
-            sources[ConfidenceSource.ENSEMBLE_AGREEMENT.value] = 1.0 - min(agreement, 1.0)
+            sources[ConfidenceSource.ENSEMBLE_AGREEMENT.value] = 1.0 - min(
+                agreement, 1.0
+            )
         else:
             sources[ConfidenceSource.ENSEMBLE_AGREEMENT.value] = 0.7  # Default moderate
 
@@ -166,16 +180,17 @@ class ConfidenceCalculator:
             ConfidenceSource.FEATURE_QUALITY.value: 0.15,
             ConfidenceSource.CONTEXT_MATCH.value: 0.1,
             ConfidenceSource.HISTORICAL_ACCURACY.value: 0.1,
-            ConfidenceSource.ENSEMBLE_AGREEMENT.value: 0.1
+            ConfidenceSource.ENSEMBLE_AGREEMENT.value: 0.1,
         }
 
         reliability = sum(
-            sources[source] * weights.get(source, 0.0)
-            for source in sources
+            sources[source] * weights.get(source, 0.0) for source in sources
         )
 
         # Adjust reliability based on uncertainty and calibration
-        reliability = reliability * (1.0 - uncertainty * 0.3) * (0.7 + calibration * 0.3)
+        reliability = (
+            reliability * (1.0 - uncertainty * 0.3) * (0.7 + calibration * 0.3)
+        )
         reliability = max(0.0, min(1.0, reliability))
 
         # Determine confidence level
@@ -193,7 +208,7 @@ class ConfidenceCalculator:
             uncertainty=uncertainty,
             calibration=calibration,
             reliability=reliability,
-            explanation=explanation
+            explanation=explanation,
         )
 
     def _get_confidence_level(self, reliability: float) -> ConfidenceLevel:
@@ -215,13 +230,15 @@ class ConfidenceCalculator:
         level: ConfidenceLevel,
         sources: Dict[str, float],
         uncertainty: float,
-        calibration: float
+        calibration: float,
     ) -> str:
         """Generate human-readable explanation"""
         parts = []
 
         # Main confidence statement
-        parts.append(f"Confidence: {level.value.replace('_', ' ').title()} ({reliability:.2%})")
+        parts.append(
+            f"Confidence: {level.value.replace('_', ' ').title()} ({reliability:.2%})"
+        )
 
         # Key factors
         key_factors = []
@@ -255,7 +272,7 @@ class ConfidenceCalculator:
         self,
         confidence: ConfidenceAttributes,
         min_reliability: float = 0.7,
-        min_level: ConfidenceLevel = ConfidenceLevel.MEDIUM
+        min_level: ConfidenceLevel = ConfidenceLevel.MEDIUM,
     ) -> Tuple[bool, str]:
         """
         Determine if prediction should be accepted based on confidence
@@ -268,14 +285,20 @@ class ConfidenceCalculator:
             ConfidenceLevel.LOW: 1,
             ConfidenceLevel.MEDIUM: 2,
             ConfidenceLevel.HIGH: 3,
-            ConfidenceLevel.VERY_HIGH: 4
+            ConfidenceLevel.VERY_HIGH: 4,
         }
 
         if confidence.reliability < min_reliability:
-            return False, f"Reliability {confidence.reliability:.2%} below threshold {min_reliability:.2%}"
+            return (
+                False,
+                f"Reliability {confidence.reliability:.2%} below threshold {min_reliability:.2%}",
+            )
 
         if level_order[confidence.level] < level_order[min_level]:
-            return False, f"Confidence level {confidence.level.value} below required {min_level.value}"
+            return (
+                False,
+                f"Confidence level {confidence.level.value} below required {min_level.value}",
+            )
 
         return True, "Confidence meets requirements"
 

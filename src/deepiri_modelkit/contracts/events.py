@@ -9,6 +9,7 @@ from enum import Enum
 
 class EventType(str, Enum):
     """Event type enumeration"""
+
     MODEL_READY = "model-ready"
     MODEL_LOADED = "model-loaded"
     MODEL_FAILED = "model-failed"
@@ -26,6 +27,7 @@ class EventType(str, Enum):
 
 class BaseEvent(BaseModel):
     """Base event schema"""
+
     event: str
     timestamp: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
     source: str
@@ -34,6 +36,7 @@ class BaseEvent(BaseModel):
 
 class ModelReadyEvent(BaseEvent):
     """Event published when model is trained and ready"""
+
     event: str = EventType.MODEL_READY
     model_name: str
     version: str
@@ -46,6 +49,7 @@ class ModelReadyEvent(BaseEvent):
 
 class ModelLoadedEvent(BaseEvent):
     """Event published when model is loaded in runtime"""
+
     event: str = EventType.MODEL_LOADED
     model_name: str
     version: str
@@ -55,6 +59,7 @@ class ModelLoadedEvent(BaseEvent):
 
 class InferenceEvent(BaseEvent):
     """Event published after inference completes"""
+
     event: str = EventType.INFERENCE_COMPLETE
     model_name: str
     version: str
@@ -69,6 +74,7 @@ class InferenceEvent(BaseEvent):
 
 class PlatformEvent(BaseEvent):
     """Event published by platform services"""
+
     event: str  # user-interaction, task-created, etc.
     service: str
     user_id: Optional[str] = None
@@ -79,6 +85,7 @@ class PlatformEvent(BaseEvent):
 
 class AGIDecisionEvent(BaseEvent):
     """Event published by Cyrex-AGI for autonomous decisions"""
+
     event: str = EventType.AGI_DECISION
     decision_type: str
     target_service: Optional[str] = None
@@ -89,11 +96,13 @@ class AGIDecisionEvent(BaseEvent):
 
 class TrainingEvent(BaseEvent):
     """Event published during training"""
+
     event: str  # training-started, training-complete, training-failed
     experiment_id: str
     model_name: str
     status: str
+    correlation_id: Optional[str] = None
+    training_run_request_id: Optional[str] = None
     progress: Optional[float] = None  # 0.0 to 1.0
     metrics: Optional[Dict[str, Any]] = None
     error: Optional[str] = None
-

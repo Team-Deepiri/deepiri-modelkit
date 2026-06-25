@@ -6,6 +6,7 @@ import os
 
 try:
     import torch
+
     HAS_TORCH = True
 except ImportError:
     HAS_TORCH = False
@@ -28,7 +29,9 @@ def get_device() -> str:
 
     # Log diagnostic information for debugging
     logger.debug(f"PyTorch version: {torch.__version__}")
-    logger.debug(f"CUDA available (torch.cuda.is_available()): {torch.cuda.is_available()}")
+    logger.debug(
+        f"CUDA available (torch.cuda.is_available()): {torch.cuda.is_available()}"
+    )
 
     if torch.cuda.is_available():
         try:
@@ -50,14 +53,17 @@ def get_device() -> str:
                     # Try to get the list of supported compute capabilities
                     # PyTorch 2.9.1 with CUDA 12.6 supports up to sm_90
                     # RTX 5080/5090 requires sm_120 support (CUDA 12.8+)
-                    test_tensor = torch.tensor([1.0], device='cuda')
+                    test_tensor = torch.tensor([1.0], device="cuda")
                     result = test_tensor * 2.0
                     _ = result.cpu()
                     del test_tensor, result
                     torch.cuda.empty_cache()
                 except RuntimeError as e:
-                    if "no kernel image is available for execution on the device" in str(e) or \
-                       "cudaErrorNoKernelImageForDevice" in str(e):
+                    if (
+                        "no kernel image is available for execution on the device"
+                        in str(e)
+                        or "cudaErrorNoKernelImageForDevice" in str(e)
+                    ):
                         logger.error(
                             f"RTX 5080/5090 (sm_{cuda_capability[0]}.{cuda_capability[1]}) detected, but PyTorch doesn't support this compute capability. "
                             f"Current PyTorch supports up to sm_90. "
@@ -69,7 +75,7 @@ def get_device() -> str:
                         raise
 
             # Test GPU functionality with a simple operation
-            test_tensor = torch.tensor([1.0], device='cuda')
+            test_tensor = torch.tensor([1.0], device="cuda")
             result = test_tensor * 2.0
             _ = result.cpu()  # Ensure operation completes
             del test_tensor, result
@@ -83,8 +89,10 @@ def get_device() -> str:
         except RuntimeError as cuda_error:
             error_msg = str(cuda_error)
             # Check if this is the RTX 5080 compatibility issue
-            if "no kernel image is available for execution on the device" in error_msg or \
-               "cudaErrorNoKernelImageForDevice" in error_msg:
+            if (
+                "no kernel image is available for execution on the device" in error_msg
+                or "cudaErrorNoKernelImageForDevice" in error_msg
+            ):
                 logger.error(
                     f"GPU compute capability not supported by current PyTorch installation. "
                     f"GPU: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'Unknown'}, "
@@ -110,7 +118,9 @@ def get_device() -> str:
 
         # Check if we're in Docker and might need NVIDIA Container Toolkit
         if os.path.exists("/.dockerenv"):
-            logger.debug("Running in Docker container - ensure NVIDIA Container Toolkit is installed")
+            logger.debug(
+                "Running in Docker container - ensure NVIDIA Container Toolkit is installed"
+            )
             # Check for NVIDIA runtime
             if os.path.exists("/proc/driver/nvidia"):
                 logger.warning(
@@ -120,16 +130,18 @@ def get_device() -> str:
                 )
 
     # Check MPS (Apple Silicon)
-    if hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
         try:
-            test_tensor = torch.tensor([1.0], device='mps')
+            test_tensor = torch.tensor([1.0], device="mps")
             result = test_tensor * 2.0
             _ = result.cpu()
             del test_tensor, result
             logger.info("Apple Silicon (MPS) detected and tested successfully")
             return "mps"
         except Exception as mps_error:
-            logger.warning(f"MPS available but test failed, falling back to CPU: {mps_error}")
+            logger.warning(
+                f"MPS available but test failed, falling back to CPU: {mps_error}"
+            )
 
     # Fallback to CPU
     logger.info("Using CPU device (no GPU detected or GPU test failed)")
@@ -139,5 +151,7 @@ def get_device() -> str:
 def get_torch_device() -> "torch.device":
     """Get PyTorch device object"""
     if not HAS_TORCH:
-        raise ImportError("torch is required for get_torch_device(). Install with: pip install torch")
+        raise ImportError(
+            "torch is required for get_torch_device(). Install with: pip install torch"
+        )
     return torch.device(get_device())
