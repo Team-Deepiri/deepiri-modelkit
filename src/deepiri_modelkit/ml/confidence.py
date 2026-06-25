@@ -139,9 +139,9 @@ class ConfidenceCalculator:
         if training_coverage is not None:
             sources[ConfidenceSource.TRAINING_DATA_COVERAGE.value] = training_coverage
         else:
-            sources[ConfidenceSource.TRAINING_DATA_COVERAGE.value] = (
-                0.7  # Default moderate
-            )
+            sources[
+                ConfidenceSource.TRAINING_DATA_COVERAGE.value
+            ] = 0.7  # Default moderate
 
         # Feature quality
         if feature_quality is not None:
@@ -161,9 +161,9 @@ class ConfidenceCalculator:
             hist_acc = historical_accuracy.get(predicted_class, 0.7)
             sources[ConfidenceSource.HISTORICAL_ACCURACY.value] = hist_acc
         else:
-            sources[ConfidenceSource.HISTORICAL_ACCURACY.value] = (
-                0.7  # Default moderate
-            )
+            sources[
+                ConfidenceSource.HISTORICAL_ACCURACY.value
+            ] = 0.7  # Default moderate
 
         # Ensemble agreement (if top_k_probs provided)
         if top_k_probs:
