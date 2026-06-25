@@ -27,14 +27,22 @@ from .contracts.training import (
 from .streaming.event_stream import StreamingClient
 from .registry.model_registry import ModelRegistryClient
 from .registry.adapters import LocalAdapter, MLflowAdapter, S3Adapter
+from .data import validate_manifest_against_path, validate_manifest_file
 from .training import (
     TrainingJobQueue,
     TRAINING_JOBS_STREAM,
+    TrainingRunContext,
     read_manifest,
     write_manifest,
     publish_training_event,
     register_model_ready,
     training_jobs_stream_name,
+    build_training_event,
+    build_training_run_request,
+    emit_training_lifecycle_event,
+    create_run_context,
+    persist_manifest_for_dataset,
+    pipeline_metadata,
 )
 from .logging import get_logger, get_error_logger, ErrorLogger
 
@@ -66,6 +74,15 @@ __all__ = [
     "publish_training_event",
     "register_model_ready",
     "training_jobs_stream_name",
+    "TrainingRunContext",
+    "validate_manifest_against_path",
+    "validate_manifest_file",
+    "build_training_event",
+    "build_training_run_request",
+    "emit_training_lifecycle_event",
+    "create_run_context",
+    "persist_manifest_for_dataset",
+    "pipeline_metadata",
     "get_logger",
     "get_error_logger",
     "ErrorLogger",
