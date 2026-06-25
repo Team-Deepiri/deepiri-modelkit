@@ -52,7 +52,9 @@ def persist_manifest_for_dataset(
     return path
 
 
-def pipeline_metadata(ctx: TrainingRunContext, extra: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+def pipeline_metadata(
+    ctx: TrainingRunContext, extra: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
     """Standard metadata blob for registry + events."""
     data: Dict[str, Any] = {
         "experiment_id": ctx.experiment_id,

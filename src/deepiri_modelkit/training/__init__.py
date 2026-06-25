@@ -12,7 +12,11 @@ from .integration import (
 )
 from .job_queue import TRAINING_JOBS_STREAM, TrainingJobQueue
 from .manifest_io import read_manifest, write_manifest
-from .pipeline_factory import create_run_context, persist_manifest_for_dataset, pipeline_metadata
+from .pipeline_factory import (
+    create_run_context,
+    persist_manifest_for_dataset,
+    pipeline_metadata,
+)
 from .run_context import TrainingRunContext
 
 __all__ = [

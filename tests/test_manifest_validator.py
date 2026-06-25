@@ -3,7 +3,10 @@ from pathlib import Path
 
 from deepiri_modelkit.contracts.training import DatasetManifest
 from deepiri_modelkit.data.manifest_validator import validate_manifest_against_path
-from deepiri_modelkit.training.pipeline_factory import create_run_context, persist_manifest_for_dataset
+from deepiri_modelkit.training.pipeline_factory import (
+    create_run_context,
+    persist_manifest_for_dataset,
+)
 
 
 def test_validate_manifest_against_path(tmp_path: Path):
