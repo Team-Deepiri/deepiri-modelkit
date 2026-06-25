@@ -92,9 +92,9 @@ class SystemMetrics:
             "avg_retrieval_time_ms": self.avg_retrieval_time_ms,
             "avg_indexing_time_ms": self.avg_indexing_time_ms,
             "error_rate": self.error_rate,
-            "last_updated": self.last_updated.isoformat()
-            if self.last_updated
-            else None,
+            "last_updated": (
+                self.last_updated.isoformat() if self.last_updated else None
+            ),
         }
 
 
@@ -139,14 +139,19 @@ class RAGMonitor:
             cache_hit=cache_hit,
             reranking_used=reranking_used,
             query_expansion_used=query_expansion_used,
-            industry=query.industry.value
-            if query.industry and hasattr(query.industry, "value")
-            else str(query.industry),
-            doc_types=[
-                dt.value if hasattr(dt, "value") else str(dt) for dt in query.doc_types
-            ]
-            if query.doc_types
-            else None,
+            industry=(
+                query.industry.value
+                if query.industry and hasattr(query.industry, "value")
+                else str(query.industry)
+            ),
+            doc_types=(
+                [
+                    dt.value if hasattr(dt, "value") else str(dt)
+                    for dt in query.doc_types
+                ]
+                if query.doc_types
+                else None
+            ),
         )
 
         self.retrieval_metrics.append(metric)

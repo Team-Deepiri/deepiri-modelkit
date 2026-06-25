@@ -1,6 +1,9 @@
 """
 Streaming event schemas and validation
 """
+
+from typing import Dict, List, Type
+
 from .topics import StreamTopics
 from ..contracts.events import (
     BaseEvent,
@@ -12,9 +15,8 @@ from ..contracts.events import (
     TrainingEvent,
 )
 
-
 # Map topics to event schemas
-TOPIC_EVENT_SCHEMAS = {
+TOPIC_EVENT_SCHEMAS: Dict[StreamTopics, List[Type[BaseEvent]]] = {
     StreamTopics.MODEL_EVENTS: [ModelReadyEvent, ModelLoadedEvent],
     StreamTopics.INFERENCE_EVENTS: [InferenceEvent],
     StreamTopics.PLATFORM_EVENTS: [PlatformEvent],
@@ -37,12 +39,13 @@ def validate_event(topic: str, event_data: dict) -> BaseEvent:
     Raises:
         ValueError: If event doesn't match schema
     """
-    if topic not in TOPIC_EVENT_SCHEMAS:
+    try:
+        topic_enum = StreamTopics(topic)
+    except ValueError:
         # Unknown topic, return base event
         return BaseEvent(**event_data)
 
-    schemas = TOPIC_EVENT_SCHEMAS[topic]
-    event_type = event_data.get("event")
+    schemas = TOPIC_EVENT_SCHEMAS[topic_enum]
 
     # Try to match event type to schema
     for schema in schemas:

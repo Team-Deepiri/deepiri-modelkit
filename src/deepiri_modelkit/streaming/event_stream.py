@@ -1,6 +1,7 @@
 """
 Redis Streams client for event-driven architecture
 """
+
 import redis.asyncio as redis
 from typing import Dict, Any, Optional, AsyncIterator, Callable
 import json
@@ -42,7 +43,6 @@ class StreamingClient:
                 decode_responses=True,
             )
         self._running = False
-        self._subscriptions = {}
 
     async def connect(self):
         """Connect to Redis"""
@@ -71,16 +71,17 @@ class StreamingClient:
             event["timestamp"] = datetime.utcnow().isoformat()
 
         # Publish to stream
+        # redis-py's xadd stub narrows the fields type more than the runtime accepts.
         message_id = await self.redis.xadd(
-            topic, event, maxlen=max_length, approximate=True
+            topic, event, maxlen=max_length, approximate=True  # type: ignore[arg-type]
         )
 
-        return message_id
+        return str(message_id)
 
     async def subscribe(
         self,
         topic: str,
-        callback: Callable[[Dict[str, Any]], None],
+        callback: Optional[Callable[[Dict[str, Any]], None]] = None,
         consumer_group: Optional[str] = None,
         consumer_name: Optional[str] = None,
         last_id: str = "0",
@@ -137,9 +138,11 @@ class StreamingClient:
                         # Call callback if provided
                         if callback:
                             try:
-                                await callback(data) if asyncio.iscoroutinefunction(
-                                    callback
-                                ) else callback(data)
+                                (
+                                    await callback(data)
+                                    if asyncio.iscoroutinefunction(callback)
+                                    else callback(data)
+                                )
                             except Exception as e:
                                 print(f"Callback error: {e}")
 
@@ -188,4 +191,4 @@ class StreamingClient:
 
     async def get_stream_length(self, topic: str) -> int:
         """Get number of messages in stream"""
-        return await self.redis.xlen(topic)
+        return int(await self.redis.xlen(topic))

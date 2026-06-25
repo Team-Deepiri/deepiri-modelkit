@@ -3,6 +3,7 @@ Dynamic Semantic Analysis for Data Augmentation
 Inspired by Carnegie Mellon University (CMU) Language Technologies Institute approaches
 Uses semantic similarity and contextual understanding for dynamic variation generation
 """
+
 import json
 import re
 from typing import List, Dict, Optional, Set
@@ -47,7 +48,7 @@ class SemanticAnalyzer:
     ):
         self.ollama_base_url = ollama_base_url
         self.model = model
-        self._cache = {}  # Cache for semantic analysis results
+        self._cache: dict[str, list[str]] = {}  # Cache for semantic analysis results
 
     def _call_ollama(
         self, prompt: str, timeout: float = 15.0
@@ -65,7 +66,7 @@ class SemanticAnalyzer:
                         "num_predict": 100,  # Reduced from 200 for faster responses
                     },
                 )
-                return response.get("response", "").strip()
+                return str(response.get("response", "")).strip()
             except Exception:
                 # Fall back to HTTP
                 pass
@@ -92,7 +93,7 @@ class SemanticAnalyzer:
                 if response.status_code == 200:
                     result = response.json()
                     logger.debug("Ollama HTTP call succeeded")
-                    return result.get("response", "").strip()
+                    return str(result.get("response", "")).strip()
                 else:
                     logger.debug(
                         f"Ollama HTTP call failed: HTTP {response.status_code}"
@@ -117,7 +118,7 @@ class SemanticAnalyzer:
                 if response.status_code == 200:
                     result = response.json()
                     logger.debug("Ollama HTTP call succeeded")
-                    return result.get("response", "").strip()
+                    return str(result.get("response", "")).strip()
                 else:
                     logger.debug(
                         f"Ollama HTTP call failed: HTTP {response.status_code}"
@@ -304,7 +305,9 @@ Return a JSON object with these fields."""
             try:
                 json_match = re.search(r"\{.*?\}", response, re.DOTALL)
                 if json_match:
-                    return json.loads(json_match.group())
+                    parsed = json.loads(json_match.group())
+                    if isinstance(parsed, dict):
+                        return parsed
             except Exception:
                 pass
 
@@ -332,10 +335,10 @@ Return a JSON object with these fields."""
         try:
             if HAS_HTTPX:
                 response = httpx.get(f"{self.ollama_base_url}/api/tags", timeout=5.0)
-                return response.status_code == 200
+                return bool(response.status_code == 200)
             elif HAS_REQUESTS:
                 response = requests.get(f"{self.ollama_base_url}/api/tags", timeout=5.0)
-                return response.status_code == 200
+                return bool(response.status_code == 200)
         except Exception:
             pass
 
@@ -348,8 +351,10 @@ def get_semantic_analyzer(
     """
     Factory function to get semantic analyzer
     """
-    base_url = ollama_base_url or os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-    model_name = model or os.getenv("OLLAMA_MODEL", "llama3:8b")
+    base_url = (
+        ollama_base_url or os.getenv("OLLAMA_BASE_URL") or "http://localhost:11434"
+    )
+    model_name = model or os.getenv("OLLAMA_MODEL") or "llama3:8b"
 
     analyzer = SemanticAnalyzer(ollama_base_url=base_url, model=model_name)
 

@@ -2,6 +2,7 @@
 Shared logging utilities for all Deepiri services
 Used by: Cyrex (runtime), Helox (training), and all microservices
 """
+
 import logging
 import sys
 import json

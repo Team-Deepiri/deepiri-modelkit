@@ -2,6 +2,7 @@
 Dataset Validation Utilities
 Provides validation and quality checks for language intelligence datasets
 """
+
 import json
 from pathlib import Path
 from typing import Dict, List, Any, Optional
@@ -92,7 +93,7 @@ class DatasetValidator:
             "Starting dataset validation", path=str(data_path), type=self.dataset_type
         )
 
-        results = {
+        results: Dict[str, Any] = {
             "is_valid": True,
             "errors": [],
             "warnings": [],
@@ -225,9 +226,9 @@ class DatasetValidator:
         # Statistics
         results["statistics"].update(
             {
-                "avg_text_length": sum(text_lengths) / len(text_lengths)
-                if text_lengths
-                else 0,
+                "avg_text_length": (
+                    sum(text_lengths) / len(text_lengths) if text_lengths else 0
+                ),
                 "min_text_length": min(text_lengths) if text_lengths else 0,
                 "max_text_length": max(text_lengths) if text_lengths else 0,
                 "empty_texts": empty_texts,

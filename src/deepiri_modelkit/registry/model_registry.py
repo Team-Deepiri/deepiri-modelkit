@@ -2,6 +2,7 @@
 Unified model registry client
 Supports MLflow, S3/MinIO, and local storage
 """
+
 import os
 from typing import Dict, Any, Optional
 from pathlib import Path
@@ -122,6 +123,8 @@ class ModelRegistryClient:
 
                 return True
 
+            raise ValueError(f"Unknown registry_type: {self.registry_type}")
+
         except Exception as e:
             print(f"Error registering model: {e}")
             return False
@@ -207,6 +210,8 @@ class ModelRegistryClient:
                     "type": "local",
                 }
 
+            raise ValueError(f"Unknown registry_type: {self.registry_type}")
+
         except Exception as e:
             print(f"Error getting model: {e}")
             raise
@@ -263,9 +268,9 @@ class ModelRegistryClient:
 
         else:
             # MLflow handles loading directly
-            return model_info["uri"]
+            return str(model_info["uri"])
 
-    def list_models(self, model_name: Optional[str] = None) -> list:
+    def list_models(self, model_name: Optional[str] = None) -> list[Dict[str, Any]]:
         """
         List available models
 
@@ -288,9 +293,9 @@ class ModelRegistryClient:
                     {
                         "name": m.name,
                         "versions": [v.version for v in m.latest_versions],
-                        "latest_version": m.latest_versions[0].version
-                        if m.latest_versions
-                        else None,
+                        "latest_version": (
+                            m.latest_versions[0].version if m.latest_versions else None
+                        ),
                     }
                     for m in models
                 ]
@@ -304,28 +309,30 @@ class ModelRegistryClient:
                     Bucket=self.s3_bucket, Prefix=prefix, Delimiter="/"
                 )
 
-                models = []
+                s3_models: list[Dict[str, Any]] = []
                 for prefix_obj in response.get("CommonPrefixes", []):
                     model_path = prefix_obj["Prefix"]
                     parts = model_path.strip("/").split("/")
                     if len(parts) >= 2:
-                        models.append({"name": parts[1], "path": model_path})
+                        s3_models.append({"name": parts[1], "path": model_path})
 
-                return models
+                return s3_models
 
             elif self.registry_type == "local":
-                models = []
+                local_models: list[Dict[str, Any]] = []
                 for model_dir in self.local_path.iterdir():
                     if model_dir.is_dir():
                         versions = [d.name for d in model_dir.iterdir() if d.is_dir()]
-                        models.append(
+                        local_models.append(
                             {
                                 "name": model_dir.name,
                                 "versions": versions,
                                 "latest_version": max(versions) if versions else None,
                             }
                         )
-                return models
+                return local_models
+
+            raise ValueError(f"Unknown registry_type: {self.registry_type}")
 
         except Exception as e:
             print(f"Error listing models: {e}")

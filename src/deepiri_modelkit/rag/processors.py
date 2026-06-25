@@ -4,7 +4,7 @@ Handles preprocessing, chunking, and metadata extraction for different document 
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any, Optional
+from typing import Any, Callable, Dict, List, Optional
 import re
 from datetime import datetime
 
@@ -116,7 +116,7 @@ class RegulationProcessor(DocumentProcessor):
         section_pattern = r"(Section|Article|Part|Chapter)\s+(\d+(?:\.\d+)*)"
 
         sections = []
-        current_section = {"section": None, "content": ""}
+        current_section: Dict[str, str] = {"section": "", "content": ""}
 
         lines = content.split("\n")
         for line in lines:
@@ -379,7 +379,7 @@ class ManualProcessor(DocumentProcessor):
         section_pattern = r"(Chapter|Section)\s+(\d+(?:\.\d+)*):?\s*(.+?)(?=\n)"
 
         sections = []
-        current_section = {"chapter": None, "section": None, "content": ""}
+        current_section: Dict[str, str] = {"chapter": "", "section": "", "content": ""}
 
         lines = content.split("\n")
         for line in lines:
@@ -426,7 +426,7 @@ def get_processor(doc_type: DocumentType, **kwargs) -> DocumentProcessor:
     Returns:
         Configured document processor
     """
-    processor_map = {
+    processor_map: Dict[DocumentType, Callable[..., DocumentProcessor]] = {
         DocumentType.REGULATION: RegulationProcessor,
         DocumentType.POLICY: RegulationProcessor,  # Similar processing
         DocumentType.WORK_ORDER: HistoricalDataProcessor,
@@ -439,5 +439,7 @@ def get_processor(doc_type: DocumentType, **kwargs) -> DocumentProcessor:
         DocumentType.PROCEDURE: ManualProcessor,  # Similar processing
     }
 
-    processor_class = processor_map.get(doc_type, DocumentProcessor)
-    return processor_class(**kwargs)
+    factory = processor_map.get(doc_type)
+    if factory is None:
+        raise ValueError(f"No processor registered for document type: {doc_type}")
+    return factory(**kwargs)

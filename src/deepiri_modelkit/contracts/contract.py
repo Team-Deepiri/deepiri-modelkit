@@ -1,6 +1,7 @@
 """
 Model contract for registry (separated from models.py to avoid Pydantic Protocol conflicts)
 """
+
 from __future__ import annotations
 
 from typing import Dict, Any, Optional

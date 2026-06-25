@@ -1,6 +1,7 @@
 """
 Event schemas for streaming service
 """
+
 from pydantic import BaseModel, Field
 from typing import Dict, Any, Optional
 from datetime import datetime

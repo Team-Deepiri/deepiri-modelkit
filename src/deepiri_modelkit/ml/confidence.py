@@ -2,6 +2,7 @@
 Redesigned Confidence Classes System
 Provides structured confidence assessment with multiple attributes
 """
+
 from enum import Enum
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass

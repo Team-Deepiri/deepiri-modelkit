@@ -59,6 +59,16 @@ module = [
 ]
 ignore_errors = true
 
+[[tool.mypy.overrides]]
+module = [
+    "boto3",
+    "botocore.exceptions",
+    "torch",
+    "httpx",
+    "ollama",
+]
+ignore_missing_imports = true
+
 [tool.coverage.run]
 source = ["deepiri_modelkit"]
 omit = ["*/tests/*"]

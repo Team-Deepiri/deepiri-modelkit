@@ -20,7 +20,7 @@ class TestCase:
     expected_doc_types: Optional[List[DocumentType]] = None
     min_score: float = 0.7  # Minimum similarity score
     top_k: int = 5
-    metadata: Dict[str, Any] = None
+    metadata: Optional[Dict[str, Any]] = None
 
     def __post_init__(self):
         if self.metadata is None:
@@ -194,9 +194,9 @@ class RAGTestFixture:
             doc = Document(
                 id=f"test_doc_{i}",
                 content=f"Test document {i} content. This is sample content for testing RAG retrieval.",
-                doc_type=DocumentType.MANUAL
-                if i % 2 == 0
-                else DocumentType.MAINTENANCE_LOG,
+                doc_type=(
+                    DocumentType.MANUAL if i % 2 == 0 else DocumentType.MAINTENANCE_LOG
+                ),
                 industry=industry,
                 title=f"Test Document {i}",
                 source="test_fixture",
@@ -305,9 +305,9 @@ class PerformanceBenchmark:
                 "total_documents": len(documents),
                 "num_batches": len(batches),
                 "total_time_seconds": elapsed,
-                "avg_time_per_doc_ms": (elapsed / len(documents)) * 1000
-                if documents
-                else 0.0,
+                "avg_time_per_doc_ms": (
+                    (elapsed / len(documents)) * 1000 if documents else 0.0
+                ),
                 "docs_per_second": len(documents) / elapsed if elapsed > 0 else 0.0,
             }
 

@@ -2,6 +2,7 @@
 Dataset Monitoring and Logging Utilities
 Provides monitoring, alerting, and logging for dataset versioning operations
 """
+
 import json
 import time
 from pathlib import Path
@@ -34,7 +35,7 @@ class DatasetMonitor:
         self.alerts_file = self.log_dir / "alerts.jsonl"
 
         # In-memory metrics for quick access
-        self.current_metrics = {
+        self.current_metrics: Dict[str, Any] = {
             "total_versions_created": 0,
             "total_datasets_tracked": 0,
             "average_version_creation_time": 0,
@@ -158,7 +159,7 @@ class DatasetMonitor:
         """Get usage analytics for the specified period."""
         cutoff_date = datetime.utcnow() - timedelta(days=days)
 
-        analytics = {
+        analytics: Dict[str, Any] = {
             "period_days": days,
             "version_creations": [],
             "training_runs": [],
@@ -224,12 +225,12 @@ class DatasetMonitor:
                         continue
 
         return {
-            "avg_version_creation_time": statistics.mean(creation_times)
-            if creation_times
-            else 0,
-            "avg_validation_time": statistics.mean(validation_times)
-            if validation_times
-            else 0,
+            "avg_version_creation_time": (
+                statistics.mean(creation_times) if creation_times else 0
+            ),
+            "avg_validation_time": (
+                statistics.mean(validation_times) if validation_times else 0
+            ),
             "total_operations": len(creation_times) + len(validation_times),
             "creation_times": creation_times[-10:],  # Last 10
             "validation_times": validation_times[-10:],  # Last 10

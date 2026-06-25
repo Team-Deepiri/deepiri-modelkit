@@ -2,6 +2,7 @@
 GPU Device Detection Utility
 Automatically detects and uses GPU (CUDA) if available, falls back to CPU
 """
+
 import os
 
 try:

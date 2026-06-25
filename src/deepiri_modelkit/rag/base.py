@@ -135,12 +135,16 @@ class Document:
             industry=IndustryNiche(data["industry"]),
             title=data.get("title"),
             source=data.get("source"),
-            created_at=datetime.fromisoformat(data["created_at"])
-            if data.get("created_at")
-            else None,
-            updated_at=datetime.fromisoformat(data["updated_at"])
-            if data.get("updated_at")
-            else None,
+            created_at=(
+                datetime.fromisoformat(data["created_at"])
+                if data.get("created_at")
+                else None
+            ),
+            updated_at=(
+                datetime.fromisoformat(data["updated_at"])
+                if data.get("updated_at")
+                else None
+            ),
             author=data.get("author"),
             version=data.get("version"),
             metadata=data.get("metadata", {}),
@@ -182,12 +186,12 @@ class RAGQuery:
         return {
             "query": self.query,
             "industry": self.industry.value if self.industry else None,
-            "doc_types": [dt.value for dt in self.doc_types]
-            if self.doc_types
-            else None,
-            "date_range": [dr.isoformat() for dr in self.date_range]
-            if self.date_range
-            else None,
+            "doc_types": (
+                [dt.value for dt in self.doc_types] if self.doc_types else None
+            ),
+            "date_range": (
+                [dr.isoformat() for dr in self.date_range] if self.date_range else None
+            ),
             "metadata_filters": self.metadata_filters,
             "top_k": self.top_k,
         }
@@ -288,7 +292,7 @@ class UniversalRAGEngine(ABC):
         industry: Optional[IndustryNiche] = None,
         doc_types: Optional[List[DocumentType]] = None,
         top_k: Optional[int] = None,
-        **filters
+        **filters,
     ) -> List[RetrievalResult]:
         """
         Convenience method for simple search

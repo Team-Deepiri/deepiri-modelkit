@@ -4,7 +4,7 @@ Implements various retrieval strategies for different use cases
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any, Optional
+from typing import Any, Callable, Dict, List, Optional
 from dataclasses import dataclass
 
 from .base import Document, RetrievalResult, RAGQuery
@@ -223,10 +223,9 @@ class ContextualRetriever(BaseRetriever):
         current_time = datetime.now().timestamp()
 
         for result in results:
-            if result.document.updated_at or result.document.created_at:
-                doc_time = (
-                    result.document.updated_at or result.document.created_at
-                ).timestamp()
+            ts = result.document.updated_at or result.document.created_at
+            if ts is not None:
+                doc_time = ts.timestamp()
                 # Calculate age in days
                 age_days = (current_time - doc_time) / 86400
 
@@ -277,11 +276,9 @@ def get_retriever(retriever_type: str, **kwargs) -> BaseRetriever:
     Returns:
         Configured retriever
     """
-    retriever_map = {
+    retriever_map: Dict[str, Callable[..., BaseRetriever]] = {
         "hybrid": HybridRetriever,
         "multimodal": MultiModalRetriever,
         "contextual": ContextualRetriever,
     }
-
-    retriever_class = retriever_map.get(retriever_type, HybridRetriever)
-    return retriever_class(**kwargs)
+    return retriever_map.get(retriever_type, HybridRetriever)(**kwargs)
