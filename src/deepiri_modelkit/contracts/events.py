@@ -102,6 +102,8 @@ class TrainingEvent(BaseEvent):
     experiment_id: str
     model_name: str
     status: str
+    correlation_id: Optional[str] = None
+    training_run_request_id: Optional[str] = None
     progress: Optional[float] = None  # 0.0 to 1.0
     metrics: Optional[Dict[str, Any]] = None
     error: Optional[str] = None

@@ -1,43 +1,63 @@
-[build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[project]
+[tool.poetry]
 name = "deepiri-modelkit"
-version = "0.1.0"
+version = "0.2.0"
 description = "Shared contracts, interfaces, and utilities for Deepiri AI/ML services"
+authors = ["Team Deepiri"]
 readme = "README.md"
-requires-python = ">=3.11"
-dependencies = [
-    "pydantic>=2.0.0",
-    "redis>=5.0.0",
-    "mlflow>=2.8.0",
-    "boto3>=1.28.0",  # For S3/MinIO
-]
+packages = [{ include = "deepiri_modelkit", from = "src" }]
 
-[project.optional-dependencies]
-ml = [
-    "numpy>=1.24.0",
-    "ollama",
-    "httpx>=0.24.0",
-]
-utils = [
-    "torch>=2.0.0",
-]
-dev = [
-    "pytest>=7.0.0",
-    "pytest-asyncio>=0.21.0",
-    "black>=23.0.0",
-    "mypy>=1.0.0",
-]
+[tool.poetry.dependencies]
+python = ">=3.11,<3.14"
+pydantic = "^2.0"
+redis = "^5.0"
+mlflow = ">=3.11.1,<4.0"
+boto3 = "^1.28"
+numpy = { version = "^1.24", optional = true }
+ollama = { version = "*", optional = true }
+httpx = { version = "^0.27", optional = true }
+torch = { version = "^2.0", optional = true }
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.0"
+pytest-asyncio = "^0.21"
+pytest-cov = "^4.0"
+fakeredis = "^2.0"
+black = "^23.0"
+mypy = "^1.0"
+types-redis = "^4.6.0"
+
+[tool.poetry.extras]
+ml = ["numpy", "ollama", "httpx"]
+utils = ["torch"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
 
 [tool.mypy]
 python_version = "3.11"
 warn_return_any = true
 warn_unused_configs = true
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "deepiri_modelkit.rag.*",
+    "deepiri_modelkit.data.*",
+    "deepiri_modelkit.ml.*",
+    "deepiri_modelkit.utils.*",
+    "deepiri_modelkit.streaming.event_stream",
+    "deepiri_modelkit.streaming.schemas",
+    "deepiri_modelkit.registry.model_registry",
+    "deepiri_modelkit.contracts.models",
+    "deepiri_modelkit.contracts.services",
+    "deepiri_modelkit.logging",
+]
+ignore_errors = true
 
 [[tool.mypy.overrides]]
 module = [
@@ -49,3 +69,9 @@ module = [
 ]
 ignore_missing_imports = true
 
+[tool.coverage.run]
+source = ["deepiri_modelkit"]
+omit = ["*/tests/*"]
+
+[tool.coverage.report]
+show_missing = true
