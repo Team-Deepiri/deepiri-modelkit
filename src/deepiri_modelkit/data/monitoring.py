@@ -383,9 +383,9 @@ class DatasetMonitor:
                         )
 
                         self.current_metrics["total_versions_created"] = version_count
-                        self.current_metrics["validation_errors_today"] = (
-                            validation_count
-                        )
+                        self.current_metrics[
+                            "validation_errors_today"
+                        ] = validation_count
             except Exception as e:
                 logger.warning("Failed to load metrics from log", error=str(e))
 

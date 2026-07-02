@@ -24,7 +24,7 @@ class ModelContract(BaseModel):
     input_schema: Dict[str, Any]
     output_schema: Dict[str, Any]
     validation_tests: Optional[list] = None
-    model_path: Optional[str] = (
-        None  # Path/reference to where the model can be loaded from
-    )
+    model_path: Optional[
+        str
+    ] = None  # Path/reference to where the model can be loaded from
     model_id: Optional[str] = None  # Unique identifier for the model instance
