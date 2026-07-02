@@ -1,6 +1,7 @@
 """
 Redis stream producer/consumer for training job requests.
 """
+
 from __future__ import annotations
 
 import os
