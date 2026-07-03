@@ -1,4 +1,5 @@
 """Factory helpers for standard training pipeline setup."""
+
 from __future__ import annotations
 
 from pathlib import Path

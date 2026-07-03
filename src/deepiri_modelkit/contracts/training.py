@@ -1,6 +1,7 @@
 """
 Training contracts shared across Helox, Cyrex, and the training orchestrator.
 """
+
 from __future__ import annotations
 
 from enum import Enum

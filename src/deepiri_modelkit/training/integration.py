@@ -1,6 +1,7 @@
 """
 Integration helpers for publishing training events and registering trained models.
 """
+
 from __future__ import annotations
 
 import json
