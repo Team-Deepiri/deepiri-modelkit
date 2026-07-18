@@ -16,6 +16,18 @@ def test_helox_training_topics_stay_in_pipeline_namespace() -> None:
     )
 
 
+def test_agi_pipeline_bus_topics() -> None:
+    assert StreamTopics.PIPELINE_PRESSURE_EVENTS.value == "pipeline.pressure.events"
+    assert (
+        StreamTopics.PIPELINE_ARTIFACT_INVALIDATION.value
+        == "pipeline.artifact.invalidation"
+    )
+    assert StreamTopics.PIPELINE_SPLICE_EVENTS.value == "pipeline.splice.events"
+    assert StreamTopics.PIPELINE_DEAD_LETTER.value == "pipeline.dead-letter"
+    assert StreamTopics.PIPELINE_METRICS.value == "pipeline.metrics"
+    assert StreamTopics.TRAINING_JOBS.value == "training-jobs"
+
+
 def test_all_includes_shared_stream_topics() -> None:
     topics = set(StreamTopics.all())
 
@@ -25,3 +37,8 @@ def test_all_includes_shared_stream_topics() -> None:
     assert "document.artifacts" in topics
     assert "pipeline.helox-training.raw" in topics
     assert "pipeline.helox-training.structured" in topics
+    assert "pipeline.pressure.events" in topics
+    assert "pipeline.artifact.invalidation" in topics
+    assert "pipeline.splice.events" in topics
+    assert "training-jobs" in topics
+    assert len(StreamTopics.sugar_glider_allowlist()) == len(topics)
