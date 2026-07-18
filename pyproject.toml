@@ -2,7 +2,7 @@
 name = "deepiri-modelkit"
 version = "0.2.0"
 description = "Shared contracts, interfaces, and utilities for Deepiri AI/ML services"
-authors = ["Team Deepiri"]
+authors = ["Team Deepiri <team@deepiri.dev>"]
 readme = "README.md"
 packages = [{ include = "deepiri_modelkit", from = "src" }]
 
