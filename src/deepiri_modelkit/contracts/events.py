@@ -107,3 +107,35 @@ class TrainingEvent(BaseEvent):
     progress: Optional[float] = None  # 0.0 to 1.0
     metrics: Optional[Dict[str, Any]] = None
     error: Optional[str] = None
+
+
+class PressureBusEvent(BaseEvent):
+    """Cyrex AGI pressure map event on pipeline.pressure.events"""
+
+    event: str = "pressure.event"
+    document_id: str
+    section_id: str
+    pressure_event_type: str
+    page: Optional[int] = None
+    artifact_id: Optional[str] = None
+    data: Dict[str, Any] = Field(default_factory=dict)
+
+
+class ArtifactInvalidationEvent(BaseEvent):
+    """Ghost-graph / invalidation wave on pipeline.artifact.invalidation"""
+
+    event: str = "artifact.invalidation"
+    document_id: str
+    artifact_id: Optional[str] = None
+    reason: str
+    cascade: bool = False
+    data: Dict[str, Any] = Field(default_factory=dict)
+
+
+class SpliceBusEvent(BaseEvent):
+    """Duel splice column progress on pipeline.splice.events"""
+
+    event: str = "splice.event"
+    document_id: str
+    splice_id: Optional[str] = None
+    data: Dict[str, Any] = Field(default_factory=dict)

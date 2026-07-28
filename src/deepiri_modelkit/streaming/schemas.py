@@ -13,6 +13,9 @@ from ..contracts.events import (
     PlatformEvent,
     AGIDecisionEvent,
     TrainingEvent,
+    PressureBusEvent,
+    ArtifactInvalidationEvent,
+    SpliceBusEvent,
 )
 
 # Map topics to event schemas
@@ -22,6 +25,9 @@ TOPIC_EVENT_SCHEMAS: Dict[StreamTopics, List[Type[BaseEvent]]] = {
     StreamTopics.PLATFORM_EVENTS: [PlatformEvent],
     StreamTopics.AGI_DECISIONS: [AGIDecisionEvent],
     StreamTopics.TRAINING_EVENTS: [TrainingEvent],
+    StreamTopics.PIPELINE_PRESSURE_EVENTS: [PressureBusEvent],
+    StreamTopics.PIPELINE_ARTIFACT_INVALIDATION: [ArtifactInvalidationEvent],
+    StreamTopics.PIPELINE_SPLICE_EVENTS: [SpliceBusEvent],
 }
 
 
