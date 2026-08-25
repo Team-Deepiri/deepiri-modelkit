@@ -38,5 +38,9 @@ class StreamTopics(str, Enum):
 
     @classmethod
     def sugar_glider_allowlist(cls) -> list:
-        """Canonical SUGAR_GLIDER_/SIDECAR_ PUBLISH/CONSUME stream list for compose."""
+        """Canonical Redis stream topic names for Sugar Glider compose allowlists.
+
+        Used as ``SUGAR_GLIDER_PUBLISH_STREAMS`` / ``SIDECAR_PUBLISH_STREAMS``
+        (and the matching CONSUME lists). Returns every ``StreamTopics`` value.
+        """
         return cls.all()
