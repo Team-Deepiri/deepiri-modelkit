@@ -28,6 +28,8 @@ class StreamTopics(str, Enum):
     PIPELINE_SPLICE_EVENTS = "pipeline.splice.events"
     PIPELINE_DEAD_LETTER = "pipeline.dead-letter"
     PIPELINE_METRICS = "pipeline.metrics"
+    # Speech plane (deepiri-speech STT/TTS / LiveKit session events).
+    SPEECH_EVENTS = "speech-events"
 
     @classmethod
     def all(cls) -> list:
@@ -36,5 +38,5 @@ class StreamTopics(str, Enum):
 
     @classmethod
     def sugar_glider_allowlist(cls) -> list:
-        """Canonical SIDECAR_PUBLISH/CONSUME stream list for compose."""
+        """Canonical SUGAR_GLIDER_/SIDECAR_ PUBLISH/CONSUME stream list for compose."""
         return cls.all()
