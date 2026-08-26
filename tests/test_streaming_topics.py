@@ -41,4 +41,7 @@ def test_all_includes_shared_stream_topics() -> None:
     assert "pipeline.artifact.invalidation" in topics
     assert "pipeline.splice.events" in topics
     assert "training-jobs" in topics
+    assert "speech-events" in topics
+    assert StreamTopics.SPEECH_EVENTS.value == "speech-events"
     assert len(StreamTopics.sugar_glider_allowlist()) == len(topics)
+    assert "speech-events" in StreamTopics.sugar_glider_allowlist()
